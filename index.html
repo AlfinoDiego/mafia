@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Diego's Syndicate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* === GLOBAL STYLES === */
+    :root {
+      --blood: #5a0000;
+      --gold: #8b6e3d;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Old Standard TT', serif;
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--darker);
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    /* === ENHANCED LOADING SCREEN === */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--darker);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease-out;
+      overflow: hidden;
+    }
+
+    .loading-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-logo {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .loading-subtitle {
+      font-size: 0.8rem;
+      color: var(--light);
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    .loading-bar-container {
+      width: 200px;
+      height: 3px;
+      background: rgba(90, 0, 0, 0.3);
+      margin-bottom: 30px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .loading-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--blood), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    .loading-warning {
+      color: var(--blood);
+      font-size: 0.8rem;
+      text-align: center;
+      max-width: 250px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Mafia-themed loading animations */
+    .loading-bullet {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: var(--gold);
+      border-radius: 50%;
+      z-index: 1;
+      animation: bulletOrbit 6s linear infinite;
+      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+    }
+
+    .loading-bullet:nth-child(2) {
+      width: 20px;
+      height: 20px;
+      animation-delay: -2s;
+      animation-duration: 8s;
+    }
+
+    .loading-bullet:nth-child(3) {
+      width: 10px;
+      height: 10px;
+      animation-delay: -4s;
+      animation-duration: 10s;
+    }
+
+    .loading-money {
+      position: absolute;
+      color: var(--gold);
+      font-size: 1rem;
+      z-index: 1;
+      animation: moneyFloat 5s linear infinite;
+    }
+
+    .loading-money:nth-child(4) {
+      top: 20%;
+      left: 15%;
+      animation-delay: 0s;
+    }
+
+    .loading-money:nth-child(5) {
+      top: 70%;
+      left: 80%;
+      animation-delay: -1.5s;
+    }
+
+    .loading-money:nth-child(6) {
+      top: 85%;
+      left: 30%;
+      animation-delay: -3s;
+    }
+
+    @keyframes bulletOrbit {
+      0% {
+        transform: rotate(0deg) translateX(100px) rotate(0deg);
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: rotate(360deg) translateX(100px) rotate(-360deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes moneyFloat {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      90% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
+      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+    }
+
+    /* === MAFIA BACKGROUND === */
+    .mafia-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: url('https://files.catbox.moe/fjt01h.jpg') no-repeat center center/cover;
+      opacity: 0.8;
+      filter: brightness(0.6) contrast(1.2);
+    }
+
+    /* === BLOOD SPLASH EFFECT === */
+    .blood-splash {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(139,0,0,0.8) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10;
+      transform: scale(0);
+      opacity: 0;
+      animation: bloodSplash 1.5s forwards;
+    }
+
+    @keyframes bloodSplash {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* === HEADER STYLE === */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 5, 5, 0.95);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--blood);
+      position: relative;
+      z-index: 20;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      position: relative;
+      text-shadow: 0 0 5px rgba(139, 110, 61, 0.3);
+      margin-left: 15px;
+    }
+
+    /* === SIDEBAR (MAFIA MENU) === */
+    .sidebar {
+      width: 250px;
+      background: rgba(5, 5, 5, 0.97);
+      padding: 30px 0;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      bottom: 0;
+      z-index: 90;
+      transition: left 0.4s ease;
+      border-right: 1px solid var(--blood);
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.9);
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar-header {
+      padding: 0 25px 20px;
+      border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+      margin-bottom: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .sidebar-header h2 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+    }
+
+    .sidebar-header .motto {
+      font-size: 0.9rem;
+      color: var(--blood);
+      font-style: italic;
+      letter-spacing: 1px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar ul li {
+      padding: 12px 25px;
+      border-left: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar ul li:hover {
+      background: rgba(90, 0, 0, 0.3);
+      border-left: 3px solid var(--blood);
+    }
+
+    .sidebar ul li a {
+      color: var(--light);
+      text-decoration: none;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar ul li a i {
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    /* === MAIN CONTENT === */
+    .content {
+      flex: 1;
+      padding: 40px;
+      padding-left: 290px;
+      transition: padding-left 0.4s ease;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      position: relative;
+      text-align: center;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--blood), transparent);
+    }
+
+    p {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(201, 201, 201, 0.8);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* === MENU TOGGLE === */
+    .menu-toggle {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      cursor: pointer;
+      z-index: 100;
+      margin-right: 15px;
+    }
+
+    .menu-toggle span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle.active span:nth-child(1) {
+      transform: translateY(9px) rotate(45deg);
+    }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) {
+      transform: translateY(-9px) rotate(-45deg);
+    }
+
+    /* === OVERLAY EFFECT === */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 80;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* === RESPONSIVE DESIGN === */
+    @media (max-width: 992px) {
+      .content {
+        padding-left: 40px;
+      }
+      
+      .sidebar.active + .content {
+        padding-left: 290px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 15px;
+      }
+
+      .logo {
+        font-size: 1.3rem;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ENHANCED LOADING SCREEN -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-container">
+      <!-- Animated bullets orbiting -->
+      <div class="loading-bullet"></div>
+      <div class="loading-bullet"></div>
+      <div class="loading-bullet"></div>
+      
+      <!-- Floating money bills -->
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      
+      <!-- Content -->
+      <div class="loading-logo">DIEGO'S SYNDICATE</div>
+      <div class="loading-subtitle">Secret Business</div>
+      <div class="loading-bar-container">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="loading-warning">
+        "Discretion is our business. Speak of this and face consequences."
+      </div>
+    </div>
+  </div>
+
+  <!-- DARK BACKGROUND -->
+  <div class="mafia-bg"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">DIEGO'S SYNDICATE</div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-handshake"></i> THE FAMILY</h2>
+      <p class="motto">"Plata o Plomo"</p>
+    </div>
+    <ul>
+      <li><a href="aboutme.html"><i class="fas fa-user-secret"></i> About The Don</a></li>
+      <li><a href="testimoni.html"><i class="fas fa-scroll"></i> Client Testimonials</a></li>
+      <li><a href="service.html"><i class="fas fa-gun"></i> Special Services</a></li>
+      <li><a href="payment.html"><i class="fas fa-money-bill-wave"></i> Payment Methods</a></li>
+      <li><a href="secret.html"><i class="fas fa-briefcase"></i> Underground Operations</a></li>
+    </ul>
+  </aside>
+
+  <!-- OVERLAY -->
+  <div class="overlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+    <h1>PERTEMUAN RAHASIA</h1>
+    
+    <p>Di dunia bawah tanah ini, setiap pertemuan adalah rahasia yang dijaga dengan nyawa. Diego's Syndicate mengoperasikan bisnis dengan kode keheningan yang tak tergoyahkan. Kepercayaan dibangun dengan darah, dan pengkhianatan dihukum dengan cara yang tak terkatakan.</p>
+    
+    <p>Layanan kami eksklusif untuk mereka yang memahami aturan tak tertulis. Ketika Anda membutuhkan solusi permanen untuk masalah sementara, kami adalah jawaban yang tak terucapkan.</p>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Enhanced loading screen with mafia animations
+      const loadingScreen = document.getElementById('loadingScreen');
+      const loadingProgress = document.getElementById('loadingProgress');
+      
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        loadingProgress.style.width = Math.min(progress, 100) + '%';
+        
+        if (progress >= 100) {
+          clearInterval(loadingInterval);
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 1000);
+        }
+      }, 200);
+
+      const menuToggle = document.querySelector('.menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.overlay');
+      
+      // Toggle sidebar
+      menuToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+      });
+      
+      // Close sidebar when overlay clicked
+      overlay.addEventListener('click', function() {
+        menuToggle.classList.remove('active');
+        sidebar.classList.remove('active');
+        this.classList.remove('active');
+      });
+
+      // Blood splash effect on click
+      document.addEventListener('click', function(e) {
+        // Create blood splash
+        const splash = document.createElement('div');
+        splash.className = 'blood-splash';
+        splash.style.left = (e.clientX - 100) + 'px';
+        splash.style.top = (e.clientY - 100) + 'px';
+        document.body.appendChild(splash);
+        
+        // Remove after animation
+        setTimeout(() => {
+          document.body.removeChild(splash);
+        }, 1500);
+      });
+    });
+  </script>
+</body>
+</html>

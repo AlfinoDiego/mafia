@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About The Don | Diego's Syndicate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --blood: #5a0000;
+      --gold: #8b6e3d;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Old Standard TT', serif;
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--darker);
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    /* Enhanced Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--darker);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease-out;
+      overflow: hidden;
+    }
+
+    .loading-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-logo {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .loading-subtitle {
+      font-size: 0.8rem;
+      color: var(--light);
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    .loading-bar-container {
+      width: 200px;
+      height: 3px;
+      background: rgba(90, 0, 0, 0.3);
+      margin-bottom: 30px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .loading-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--blood), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    .loading-warning {
+      color: var(--blood);
+      font-size: 0.8rem;
+      text-align: center;
+      max-width: 250px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Mafia-themed loading animations */
+    .loading-bullet {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: var(--gold);
+      border-radius: 50%;
+      z-index: 1;
+      animation: bulletOrbit 6s linear infinite;
+      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+    }
+
+    .loading-bullet:nth-child(2) {
+      width: 20px;
+      height: 20px;
+      animation-delay: -2s;
+      animation-duration: 8s;
+    }
+
+    .loading-bullet:nth-child(3) {
+      width: 10px;
+      height: 10px;
+      animation-delay: -4s;
+      animation-duration: 10s;
+    }
+
+    .loading-money {
+      position: absolute;
+      color: var(--gold);
+      font-size: 1rem;
+      z-index: 1;
+      animation: moneyFloat 5s linear infinite;
+    }
+
+    .loading-money:nth-child(4) {
+      top: 20%;
+      left: 15%;
+      animation-delay: 0s;
+    }
+
+    .loading-money:nth-child(5) {
+      top: 70%;
+      left: 80%;
+      animation-delay: -1.5s;
+    }
+
+    .loading-money:nth-child(6) {
+      top: 85%;
+      left: 30%;
+      animation-delay: -3s;
+    }
+
+    @keyframes bulletOrbit {
+      0% {
+        transform: rotate(0deg) translateX(100px) rotate(0deg);
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: rotate(360deg) translateX(100px) rotate(-360deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes moneyFloat {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      90% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
+      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+    }
+
+    /* Background */
+    .mafia-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: url('https://files.catbox.moe/ov2zvv.jpg') no-repeat center center/cover;
+      opacity: 0.8;
+      filter: brightness(0.5) contrast(1.2);
+      animation: subtleZoom 20s infinite alternate;
+    }
+
+    @keyframes subtleZoom {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    /* Blood Drips */
+    .blood-drip {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: var(--blood);
+      opacity: 0.7;
+      animation: drip 8s linear infinite;
+      z-index: -2;
+    }
+
+    @keyframes drip {
+      0% { transform: translateY(-100px); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(5, 5, 5, 0.95);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--blood);
+      position: relative;
+      z-index: 20;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      text-shadow: 0 0 5px rgba(139, 110, 61, 0.3);
+    }
+
+    /* Main Content */
+    .content {
+      padding: 50px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      text-align: center;
+      position: relative;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blood), transparent);
+    }
+
+    h2 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      margin: 40px 0 20px;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+      padding-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(201, 201, 201, 0.8);
+    }
+
+    /* Title Section */
+    .title-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .main-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 3rem;
+      letter-spacing: 3px;
+      margin: 10px 0;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.7);
+    }
+
+    .subtitle {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .quote {
+      font-style: italic;
+      color: var(--blood);
+      letter-spacing: 1px;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    /* Skills Section */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .skill-card {
+      background: rgba(5, 5, 5, 0.7);
+      border-left: 3px solid var(--blood);
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(90, 0, 0, 0.5);
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 0%, rgba(139, 110, 61, 0.1) 100%);
+      z-index: -1;
+    }
+
+    .skill-icon {
+      color: var(--gold);
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    /* Affiliations */
+    .affiliations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .affiliation-badge {
+      background: rgba(90, 0, 0, 0.3);
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: 1px solid var(--gold);
+      font-family: 'Cinzel Decorative', cursive;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .affiliation-badge::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(transparent, rgba(139, 110, 61, 0.1), transparent);
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+
+    /* Floating Bullets */
+    .floating-bullet {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: float 15s infinite linear;
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(50vw, 25vh) rotate(90deg); }
+      50% { transform: translate(25vw, 50vh) rotate(180deg); }
+      75% { transform: translate(75vw, 25vh) rotate(270deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .content {
+        padding: 30px 20px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .main-title {
+        font-size: 2.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Enhanced Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-container">
+      <!-- Animated bullets orbiting -->
+      <div class="loading-bullet"></div>
+      <div class="loading-bullet"></div>
+      <div class="loading-bullet"></div>
+      
+      <!-- Floating money bills -->
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      
+      <!-- Content -->
+      <div class="loading-logo">THE SYNDICATE</div>
+      <div class="loading-subtitle">Secure Access Protocol</div>
+      <div class="loading-bar-container">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="loading-warning">
+        "Unauthorized access will be met with immediate retaliation"
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Elements -->
+  <div class="mafia-bg"></div>
+  
+  <!-- Blood Drips -->
+  <div class="blood-drip" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="blood-drip" style="left: 30%; animation-delay: 2s;"></div>
+  <div class="blood-drip" style="left: 50%; animation-delay: 4s;"></div>
+  <div class="blood-drip" style="left: 70%; animation-delay: 1s;"></div>
+  <div class="blood-drip" style="left: 90%; animation-delay: 3s;"></div>
+  
+  <!-- Floating Bullets -->
+  <div class="floating-bullet" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
+  <div class="floating-bullet" style="top: 70%; left: 80%; animation-delay: 5s;"></div>
+  <div class="floating-bullet" style="top: 40%; left: 60%; animation-delay: 10s;"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">THE SYNDICATE ARCHIVES</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="content">
+    <h1>CLASSIFIED OPERATIONS</h1>
+    
+    <div class="title-section">
+      <div class="subtitle">SUPREME COMMANDER</div>
+      <div class="main-title">THE ONE & ONLY</div>
+      <div class="quote">"In the silence of servers, my word is law. In the darkness of code, I am the shadow that commands."</div>
+    </div>
+    
+    <h2>ORIGINS</h2>
+    <p>Forged in the digital underworld, this entity built its empire not through brute force, but through lines of powerful JavaScript and iron-clad systems. The language of machines flows more naturally than human speech.</p>
+    
+    <p>While others chased fleeting fame, this architect crafted intelligent entities: bots that speak, listen, and serve under silent command—especially on platforms like WhatsApp, where influence spreads like whispers in the dark.</p>
+    
+    <p>With mastery of Visual Communication Design, this operative fuses aesthetics with ruthless efficiency. Every project, every interface, every command-line script bears the signature—precise, elegant, and unforgiving.</p>
+    
+    <p>A network of digital operatives stands ready, orchestrating web systems, bot deployments, and server control with mafia precision. In this world, uptime is loyalty. Lag is betrayal.</p>
+    
+    <h2>OPERATIONAL CAPABILITIES</h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fas fa-code"></i></div>
+        <h3>Advanced JavaScript Operations</h3>
+        <p>Silent executions in Node.js environments. Code that obeys without question.</p>
+      </div>
+      
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fas fa-robot"></i></div>
+        <h3>AI Bot Integration</h3>
+        <p>WhatsApp, Telegram - digital soldiers that watch, listen, and report.</p>
+      </div>
+      
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fas fa-server"></i></div>
+        <h3>Full Stack Development</h3>
+        <p>Frontend illusions, backend control. The perfect digital crime scene.</p>
+      </div>
+      
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fas fa-dragon"></i></div>
+        <h3>Pterodactyl Panel</h3>
+        <p>Server control with surgical precision. Resources allocated like territories.</p>
+      </div>
+      
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fas fa-paint-brush"></i></div>
+        <h3>Design Thinking</h3>
+        <p>Digital branding that leaves a mark. Interfaces that never forget.</p>
+      </div>
+      
+      <div class="skill-card">
+        <div class="skill-icon"><i class="fas fa-chess"></i></div>
+        <h3>Strategic Deployment</h3>
+        <p>Domains acquired like territory. Deployments executed like hits.</p>
+      </div>
+    </div>
+    
+    <h2>KNOWN AFFILIATIONS</h2>
+    <div class="affiliations">
+      <div class="affiliation-badge">SYNDICATE NETWORK</div>
+      <div class="affiliation-badge">UNDERGROUND DEV CIRCLE</div>
+    </div>
+  </main>
+
+  <script>
+    // Enhanced loading screen with progress bar
+    document.addEventListener('DOMContentLoaded', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const loadingProgress = document.getElementById('loadingProgress');
+      
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        loadingProgress.style.width = Math.min(progress, 100) + '%';
+        
+        if (progress >= 100) {
+          clearInterval(loadingInterval);
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 1000);
+        }
+      }, 200);
+
+      // Create random blood drips
+      for (let i = 0; i < 10; i++) {
+        const drip = document.createElement('div');
+        drip.className = 'blood-drip';
+        drip.style.left = Math.random() * 100 + '%';
+        drip.style.animationDelay = Math.random() * 5 + 's';
+        drip.style.animationDuration = 5 + Math.random() * 10 + 's';
+        document.body.appendChild(drip);
+      }
+      
+      // Create floating bullets
+      for (let i = 0; i < 5; i++) {
+        const bullet = document.createElement('div');
+        bullet.className = 'floating-bullet';
+        bullet.style.left = Math.random() * 100 + '%';
+        bullet.style.top = Math.random() * 100 + '%';
+        bullet.style.animationDelay = Math.random() * 15 + 's';
+        bullet.style.width = (5 + Math.random() * 10) + 'px';
+        bullet.style.height = bullet.style.width;
+        document.body.appendChild(bullet);
+      }
+      
+      // Subtle zoom effect on scroll
+      window.addEventListener('scroll', function() {
+        const scrollPosition = window.scrollY;
+        const bg = document.querySelector('.mafia-bg');
+        const scale = 1 + (scrollPosition * 0.0005);
+        bg.style.transform = `scale(${Math.min(scale, 1.1)})`;
+      });
+    });
+
+    // Ensure loading screen doesn't interfere with clicks
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      loadingScreen.style.pointerEvents = 'none';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Services | Diego's Syndicate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --blood: #5a0000;
+      --gold: #8b6e3d;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Old Standard TT', serif;
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--darker);
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    /* Enhanced Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--darker);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease-out;
+      overflow: hidden;
+    }
+
+    .loading-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-logo {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .loading-subtitle {
+      font-size: 0.8rem;
+      color: var(--light);
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    .loading-bar-container {
+      width: 200px;
+      height: 3px;
+      background: rgba(90, 0, 0, 0.3);
+      margin-bottom: 30px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .loading-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--blood), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    .loading-warning {
+      color: var(--blood);
+      font-size: 0.8rem;
+      text-align: center;
+      max-width: 250px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Mafia-themed loading animations */
+    .loading-bullet {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: var(--gold);
+      border-radius: 50%;
+      z-index: 1;
+      animation: bulletOrbit 6s linear infinite;
+      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+    }
+
+    .loading-bullet:nth-child(2) {
+      width: 20px;
+      height: 20px;
+      animation-delay: -2s;
+      animation-duration: 8s;
+    }
+
+    .loading-bullet:nth-child(3) {
+      width: 10px;
+      height: 10px;
+      animation-delay: -4s;
+      animation-duration: 10s;
+    }
+
+    .loading-money {
+      position: absolute;
+      color: var(--gold);
+      font-size: 1rem;
+      z-index: 1;
+      animation: moneyFloat 5s linear infinite;
+    }
+
+    @keyframes bulletOrbit {
+      0% {
+        transform: rotate(0deg) translateX(100px) rotate(0deg);
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: rotate(360deg) translateX(100px) rotate(-360deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes moneyFloat {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      90% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
+      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+    }
+
+    /* Background */
+    .mafia-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: url('https://files.catbox.moe/qwwm3e.jpg') no-repeat center center/cover;
+      opacity: 0.8;
+      filter: brightness(0.5) contrast(1.2);
+      animation: subtleZoom 20s infinite alternate;
+    }
+
+    @keyframes subtleZoom {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    /* Blood Drips */
+    .blood-drip {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: var(--blood);
+      opacity: 0.7;
+      animation: drip 8s linear infinite;
+      z-index: -2;
+    }
+
+    @keyframes drip {
+      0% { transform: translateY(-100px); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 5, 5, 0.95);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--blood);
+      position: relative;
+      z-index: 20;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      margin-left: 15px;
+      text-shadow: 0 0 5px rgba(139, 110, 61, 0.3);
+    }
+
+    .menu-toggle {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      cursor: pointer;
+      z-index: 100;
+      margin-right: 15px;
+    }
+
+    .menu-toggle span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+
+    /* Main Content */
+    .content {
+      padding: 50px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      text-align: center;
+      position: relative;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blood), transparent);
+    }
+
+    h2 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      margin: 40px 0 20px;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+      padding-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(201, 201, 201, 0.8);
+    }
+
+    /* Service Cards */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .service-card {
+      background: rgba(5, 5, 5, 0.7);
+      border: 1px solid rgba(139, 0, 0, 0.3);
+      padding: 30px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(90, 0, 0, 0.5);
+      border-color: var(--gold);
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 0%, rgba(139, 110, 61, 0.1) 100%);
+      z-index: -1;
+    }
+
+    .service-icon {
+      color: var(--gold);
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .service-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      background: rgba(5, 5, 5, 0.8);
+      border: 1px solid var(--blood);
+      padding: 40px;
+      margin-top: 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .contact-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .contact-description {
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--light);
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    .contact-link:hover {
+      color: var(--gold);
+      transform: translateY(-3px);
+    }
+
+    .contact-link.wa {
+      background: rgba(37, 211, 102, 0.1);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+    }
+
+    .contact-link.ig {
+      background: rgba(225, 48, 108, 0.1);
+      border: 1px solid rgba(225, 48, 108, 0.3);
+    }
+
+    .contact-link i {
+      font-size: 1.5rem;
+    }
+
+    /* Floating Bullets */
+    .floating-bullet {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: float 15s infinite linear;
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(50vw, 25vh) rotate(90deg); }
+      50% { transform: translate(25vw, 50vh) rotate(180deg); }
+      75% { transform: translate(75vw, 25vh) rotate(270deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .content {
+        padding: 30px 20px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .contact-links {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Enhanced Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-container">
+      <!-- Animated bullets orbiting -->
+      <div class="loading-bullet"></div>
+      <div class="loading-bullet"></div>
+      <div class="loading-bullet"></div>
+      
+      <!-- Floating money bills -->
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      
+      <!-- Content -->
+      <div class="loading-logo">SYNDICATE SERVICES</div>
+      <div class="loading-subtitle">Initializing Secure Connection</div>
+      <div class="loading-bar-container">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="loading-warning">
+        "Discretion guaranteed - speak of this to no one"
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Elements -->
+  <div class="mafia-bg"></div>
+  
+  <!-- Blood Drips -->
+  <div class="blood-drip" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="blood-drip" style="left: 30%; animation-delay: 2s;"></div>
+  <div class="blood-drip" style="left: 50%; animation-delay: 4s;"></div>
+  <div class="blood-drip" style="left: 70%; animation-delay: 1s;"></div>
+  <div class="blood-drip" style="left: 90%; animation-delay: 3s;"></div>
+  
+  <!-- Floating Bullets -->
+  <div class="floating-bullet" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
+  <div class="floating-bullet" style="top: 70%; left: 80%; animation-delay: 5s;"></div>
+  <div class="floating-bullet" style="top: 40%; left: 60%; animation-delay: 10s;"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">DIEGO'S SYNDICATE</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="content">
+    <h1>SPECIAL SERVICES</h1>
+    
+    <p>In the shadows of the digital world, we provide solutions that don't exist in the light. Our services are discreet, effective, and leave no traces. When you need something done quietly and efficiently, we're the silent hand that makes it happen.</p>
+    
+    <h2>OUR OFFERINGS</h2>
+    
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
+        <h3 class="service-title">Web Development</h3>
+        <p>Fronts that look legitimate, backdoors that remain invisible. We build digital storefronts that hide more than they show.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-robot"></i></div>
+        <h3 class="service-title">Bot Creation</h3>
+        <p>Silent operatives that work around the clock. Our bots gather information, automate tasks, and never sleep.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-server"></i></div>
+        <h3 class="service-title">Server Management</h3>
+        <p>Secure locations for your digital operations. We maintain safe houses in the cloud that can't be traced back to you.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3 class="service-title">Security Solutions</h3>
+        <p>Protection from prying eyes and digital intruders. We fortify your operations against unwanted attention.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-chess"></i></div>
+        <h3 class="service-title">Strategic Planning</h3>
+        <p>Blueprints for digital domination. We help you plan your moves three steps ahead of the competition.</p>
+      </div>
+      
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-user-secret"></i></div>
+        <h3 class="service-title">Discreet Consultations</h3>
+        <p>Private meetings to discuss your unique needs. What's said in our chambers stays in our chambers.</p>
+      </div>
+    </div>
+    
+    <div class="contact-section">
+      <h2 class="contact-title">MAKE CONTACT</h2>
+      <p class="contact-description">If you're ready to discuss business, reach out through our secure channels. Remember - discretion is not just our policy, it's our way of life.</p>
+      
+      <div class="contact-links">
+        <a href="https://wa.me/6281595498709" class="contact-link wa" target="_blank">
+          <i class="fab fa-whatsapp"></i>
+          <span>Secure WhatsApp Line</span>
+        </a>
+        
+        <a href="https://www.instagram.com/dieegooo.al" class="contact-link ig" target="_blank">
+          <i class="fab fa-instagram"></i>
+          <span>Discreet Instagram</span>
+        </a>
+      </div>
+      
+      <p style="margin-top: 30px; font-style: italic; color: var(--blood);">
+        "Messages are encrypted by silence. We'll respond when we're certain it's you."
+      </p>
+    </div>
+  </main>
+
+  <script>
+    // Enhanced loading screen with progress bar
+    document.addEventListener('DOMContentLoaded', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const loadingProgress = document.getElementById('loadingProgress');
+      
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        loadingProgress.style.width = Math.min(progress, 100) + '%';
+        
+        if (progress >= 100) {
+          clearInterval(loadingInterval);
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 1000);
+        }
+      }, 200);
+
+      // Create random blood drips
+      for (let i = 0; i < 10; i++) {
+        const drip = document.createElement('div');
+        drip.className = 'blood-drip';
+        drip.style.left = Math.random() * 100 + '%';
+        drip.style.animationDelay = Math.random() * 5 + 's';
+        drip.style.animationDuration = 5 + Math.random() * 10 + 's';
+        document.body.appendChild(drip);
+      }
+      
+      // Create floating bullets
+      for (let i = 0; i < 5; i++) {
+        const bullet = document.createElement('div');
+        bullet.className = 'floating-bullet';
+        bullet.style.left = Math.random() * 100 + '%';
+        bullet.style.top = Math.random() * 100 + '%';
+        bullet.style.animationDelay = Math.random() * 15 + 's';
+        bullet.style.width = (5 + Math.random() * 10) + 'px';
+        bullet.style.height = bullet.style.width;
+        document.body.appendChild(bullet);
+      }
+      
+      // Menu toggle functionality
+      const menuToggle = document.querySelector('.menu-toggle');
+      menuToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+
+    // Ensure loading screen doesn't interfere with clicks
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      loadingScreen.style.pointerEvents = 'none';
+    });
+  </script>
+</body>
+</html>

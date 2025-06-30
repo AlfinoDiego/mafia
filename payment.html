@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Methods | Diego's Syndicate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --blood: #5a0000;
+      --gold: #8b6e3d;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Old Standard TT', serif;
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--darker);
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    /* Enhanced Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--darker);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease-out;
+      overflow: hidden;
+    }
+
+    .loading-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-logo {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .loading-subtitle {
+      font-size: 0.8rem;
+      color: var(--light);
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    .loading-bar-container {
+      width: 200px;
+      height: 3px;
+      background: rgba(90, 0, 0, 0.3);
+      margin-bottom: 30px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .loading-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--blood), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    .loading-warning {
+      color: var(--blood);
+      font-size: 0.8rem;
+      text-align: center;
+      max-width: 250px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Money-themed loading animations */
+    .loading-money {
+      position: absolute;
+      color: var(--gold);
+      font-size: 1.5rem;
+      z-index: 1;
+      animation: moneyFloat 5s linear infinite;
+    }
+
+    .loading-money:nth-child(1) {
+      top: 20%;
+      left: 15%;
+      animation-delay: 0s;
+    }
+
+    .loading-money:nth-child(2) {
+      top: 70%;
+      left: 80%;
+      animation-delay: -1.5s;
+    }
+
+    .loading-money:nth-child(3) {
+      top: 85%;
+      left: 30%;
+      animation-delay: -3s;
+    }
+
+    .loading-money:nth-child(4) {
+      top: 40%;
+      left: 60%;
+      animation-delay: -2s;
+    }
+
+    .loading-money:nth-child(5) {
+      top: 10%;
+      left: 70%;
+      animation-delay: -4s;
+    }
+
+    @keyframes moneyFloat {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
+      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+    }
+
+    /* Background */
+    .mafia-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: url('https://files.catbox.moe/wiu1ki.jpg') no-repeat center center/cover;
+      opacity: 0.8;
+      filter: brightness(0.5) contrast(1.2);
+      animation: subtleZoom 20s infinite alternate;
+    }
+
+    @keyframes subtleZoom {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    /* Gold Coin Animation */
+    .gold-coin {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle at 30% 30%, #f9d423, #e4b320, #8b6e3d);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(235, 200, 50, 0.7);
+      z-index: -1;
+      animation: coinFall 15s linear infinite;
+    }
+
+    @keyframes coinFall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 5, 5, 0.95);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--blood);
+      position: relative;
+      z-index: 20;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      margin-left: 15px;
+      text-shadow: 0 0 5px rgba(139, 110, 61, 0.3);
+    }
+
+    .menu-toggle {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 21px;
+      cursor: pointer;
+      z-index: 100;
+      margin-right: 15px;
+    }
+
+    .menu-toggle span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+
+    /* Main Content */
+    .content {
+      padding: 50px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      text-align: center;
+      position: relative;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blood), transparent);
+    }
+
+    h2 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      margin: 40px 0 20px;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+      padding-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(201, 201, 201, 0.8);
+      text-align: center;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Payment Methods */
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .payment-card {
+      background: rgba(5, 5, 5, 0.7);
+      border: 1px solid rgba(139, 0, 0, 0.3);
+      padding: 30px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .payment-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(90, 0, 0, 0.5);
+      border-color: var(--gold);
+    }
+
+    .payment-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 0%, rgba(139, 110, 61, 0.1) 100%);
+      z-index: -1;
+    }
+
+    .payment-icon {
+      color: var(--gold);
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .payment-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+    }
+
+    .payment-number {
+      font-family: monospace;
+      font-size: 1.2rem;
+      color: var(--light);
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(90, 0, 0, 0.2);
+      border-left: 3px solid var(--gold);
+    }
+
+    .payment-note {
+      font-style: italic;
+      color: var(--blood);
+      font-size: 0.9rem;
+      margin-top: 15px;
+    }
+
+    .qris-image {
+      width: 200px;
+      height: 200px;
+      margin: 15px auto;
+      border: 1px solid var(--gold);
+      box-shadow: 0 0 15px rgba(139, 110, 61, 0.3);
+    }
+
+    /* Coming Soon Cards */
+    .coming-soon {
+      opacity: 0.6;
+      position: relative;
+    }
+
+    .coming-soon::after {
+      content: 'COMING SOON';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(90, 0, 0, 0.8);
+      color: var(--gold);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .content {
+        padding: 30px 20px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Enhanced Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-container">
+      <!-- Floating money bills -->
+      <div class="loading-money"><i class="fas fa-coins"></i></div>
+      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
+      <div class="loading-money"><i class="fas fa-piggy-bank"></i></div>
+      <div class="loading-money"><i class="fas fa-wallet"></i></div>
+      <div class="loading-money"><i class="fas fa-money-check-alt"></i></div>
+      
+      <!-- Content -->
+      <div class="loading-logo">PAYMENT CHANNELS</div>
+      <div class="loading-subtitle">Initializing Secure Transactions</div>
+      <div class="loading-bar-container">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="loading-warning">
+        "Payment confirms loyalty - betrayal costs more than money"
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Elements -->
+  <div class="mafia-bg"></div>
+  
+  <!-- Gold Coin Animations -->
+  <div class="gold-coin" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="gold-coin" style="left: 30%; animation-delay: 2s;"></div>
+  <div class="gold-coin" style="left: 50%; animation-delay: 4s;"></div>
+  <div class="gold-coin" style="left: 70%; animation-delay: 1s;"></div>
+  <div class="gold-coin" style="left: 90%; animation-delay: 3s;"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="menu-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">DIEGO'S SYNDICATE</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="content">
+    <h1>PAYMENT METHODS</h1>
+    
+    <p>In our world, money talks but silence keeps you alive. Choose your payment method wisely - your contribution ensures our continued... cooperation. Remember, timely payments demonstrate loyalty, and loyalty keeps you in our good graces.</p>
+    
+    <h2>DIGITAL PAYMENTS</h2>
+    
+    <div class="payment-methods">
+      <div class="payment-card">
+        <div class="payment-icon"><i class="fab fa-google-pay"></i></div>
+        <h3 class="payment-title">Gopay</h3>
+        <p>The silent transfer - quick and untraceable</p>
+        <div class="payment-number">082125903103</div>
+        <p class="payment-note">"Send with no notes - we'll know it's you"</p>
+      </div>
+      
+      <div class="payment-card">
+        <div class="payment-icon"><i class="fas fa-wallet"></i></div>
+        <h3 class="payment-title">Dana</h3>
+        <p>Discreet transactions with no paper trail</p>
+        <div class="payment-number">081585498709</div>
+        <p class="payment-note">"A quiet transfer keeps the family happy"</p>
+      </div>
+      
+      <div class="payment-card">
+        <div class="payment-icon"><i class="fas fa-mobile-alt"></i></div>
+        <h3 class="payment-title">OVO</h3>
+        <p>Fast payments for urgent matters</p>
+        <div class="payment-number">081585498709</div>
+        <p class="payment-note">"Punctuality is next to godliness"</p>
+      </div>
+      
+      <div class="payment-card">
+        <div class="payment-icon"><i class="fas fa-qrcode"></i></div>
+        <h3 class="payment-title">QRIS</h3>
+        <p>One scan seals the deal</p>
+        <img src="https://files.catbox.moe/n0d1hs.jpg" alt="QRIS Code" class="qris-image">
+        <p class="payment-note">"Scan and forget - we'll handle the rest"</p>
+      </div>
+      
+      <div class="payment-card coming-soon">
+        <div class="payment-icon"><i class="fab fa-ethereum"></i></div>
+        <h3 class="payment-title">BSC (BEP-20)</h3>
+        <p>The future of anonymous transactions</p>
+        <div class="payment-number">Coming Soon</div>
+        <p class="payment-note">"Even blockchain won't trace these"</p>
+      </div>
+      
+      <div class="payment-card coming-soon">
+        <div class="payment-icon"><i class="fas fa-coins"></i></div>
+        <h3 class="payment-title">Tron (TRC-20)</h3>
+        <p>Borderless, nameless payments</p>
+        <div class="payment-number">Coming Soon</div>
+        <p class="payment-note">"The digital underworld's favorite"</p>
+      </div>
+    </div>
+    
+    <h2>PAYMENT RULES</h2>
+    <p style="color: var(--blood); font-style: italic; text-align: center; max-width: 600px; margin: 40px auto;">
+      "Payment within 24 hours or face 10% weekly interest. No excuses, no extensions. 
+      <br>In our family, money is respect - and respect keeps you breathing."
+    </p>
+  </main>
+
+  <script>
+    // Enhanced loading screen with progress bar
+    document.addEventListener('DOMContentLoaded', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const loadingProgress = document.getElementById('loadingProgress');
+      
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        loadingProgress.style.width = Math.min(progress, 100) + '%';
+        
+        if (progress >= 100) {
+          clearInterval(loadingInterval);
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 1000);
+        }
+      }, 200);
+
+      // Create gold coins
+      for (let i = 0; i < 10; i++) {
+        const coin = document.createElement('div');
+        coin.className = 'gold-coin';
+        coin.style.left = Math.random() * 100 + '%';
+        coin.style.animationDelay = Math.random() * 5 + 's';
+        coin.style.animationDuration = 5 + Math.random() * 10 + 's';
+        coin.style.width = (20 + Math.random() * 20) + 'px';
+        coin.style.height = coin.style.width;
+        document.body.appendChild(coin);
+      }
+      
+      // Menu toggle functionality
+      const menuToggle = document.querySelector('.menu-toggle');
+      menuToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+
+    // Ensure loading screen doesn't interfere with clicks
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      loadingScreen.style.pointerEvents = 'none';
+    });
+  </script>
+</body>
+</html>
