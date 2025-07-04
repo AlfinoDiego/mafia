@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Family | Capo's Command</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --blood: #5a0000;
+      --gold: #8b6e3d;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Old Standard TT', serif;
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--darker);
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--darker);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 1s ease-out;
+    }
+
+    .loading-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-logo {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      position: relative;
+      z-index: 2;
+    }
+
+    .loading-subtitle {
+      font-size: 0.8rem;
+      color: var(--light);
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      opacity: 0.7;
+    }
+
+    .loading-bar-container {
+      width: 200px;
+      height: 3px;
+      background: rgba(90, 0, 0, 0.3);
+      margin-bottom: 30px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .loading-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--blood), var(--gold));
+      transition: width 0.3s ease;
+    }
+
+    .loading-warning {
+      color: var(--blood);
+      font-size: 0.8rem;
+      text-align: center;
+      max-width: 250px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
+      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
+    }
+
+    /* Background */
+    .mafia-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: url('https://h.uguu.se/janHTiKb.jpg') no-repeat center center/cover;
+      opacity: 0.8;
+      filter: brightness(0.5) contrast(1.2);
+    }
+
+    /* Blood Drips */
+    .blood-drip {
+      position: absolute;
+      width: 2px;
+      height: 100px;
+      background: var(--blood);
+      opacity: 0.7;
+      animation: drip 8s linear infinite;
+      z-index: -2;
+    }
+
+    @keyframes drip {
+      0% { transform: translateY(-100px); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(5, 5, 5, 0.95);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--blood);
+      position: relative;
+      z-index: 20;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      text-shadow: 0 0 5px rgba(139, 110, 61, 0.3);
+    }
+
+    /* Main Content */
+    .content {
+      padding: 50px;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      text-align: center;
+      position: relative;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blood), transparent);
+    }
+
+    h2 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.8rem;
+      margin: 40px 0 20px;
+      letter-spacing: 2px;
+      border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+      padding-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(201, 201, 201, 0.8);
+    }
+
+    /* Title Section */
+    .title-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .main-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 3rem;
+      letter-spacing: 3px;
+      margin: 10px 0;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.7);
+    }
+
+    .subtitle {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--gold);
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .quote {
+      font-style: italic;
+      color: var(--blood);
+      letter-spacing: 1px;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    /* Crew Section */
+    .crew-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .crew-card {
+      background: rgba(5, 5, 5, 0.7);
+      border-left: 3px solid var(--blood);
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .crew-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(90, 0, 0, 0.5);
+    }
+
+    .crew-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 0%, rgba(139, 110, 61, 0.1) 100%);
+      z-index: -1;
+    }
+
+    .crew-icon {
+      color: var(--gold);
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .meeting-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 8px 15px;
+      background: var(--blood);
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      border: 1px solid var(--gold);
+    }
+
+    .meeting-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+      transform: scale(1.05);
+    }
+
+    .whatsapp-link {
+      color: var(--gold);
+      text-decoration: none;
+      display: block;
+      margin: 10px 0;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 0.9rem;
+    }
+
+    .whatsapp-link:hover {
+      color: var(--light);
+      text-decoration: underline;
+    }
+
+    /* Affiliations */
+    .affiliations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .affiliation-badge {
+      background: rgba(90, 0, 0, 0.3);
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: 1px solid var(--gold);
+      font-family: 'Cinzel Decorative', cursive;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .affiliation-badge::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(transparent, rgba(139, 110, 61, 0.1), transparent);
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -50%; }
+      100% { left: 150%; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .content {
+        padding: 30px 20px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .main-title {
+        font-size: 2.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-container">
+      <div class="loading-logo">LA COSA NOSTRA</div>
+      <div class="loading-subtitle">Family Access Protocol</div>
+      <div class="loading-bar-container">
+        <div class="loading-progress" id="loadingProgress"></div>
+      </div>
+      <div class="loading-warning">
+        "Omertà is the law - Speak and you sleep with the fishes"
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Elements -->
+  <div class="mafia-bg"></div>
+  
+  <!-- Blood Drips -->
+  <div class="blood-drip" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="blood-drip" style="left: 30%; animation-delay: 2s;"></div>
+  <div class="blood-drip" style="left: 50%; animation-delay: 4s;"></div>
+  <div class="blood-drip" style="left: 70%; animation-delay: 1s;"></div>
+  <div class="blood-drip" style="left: 90%; animation-delay: 3s;"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">THE FAMILY ARCHIVES</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="content">
+    <h1>FAMILY DOSSIER</h1>
+    
+    <div class="title-section">
+      <div class="subtitle">CAPO DI TUTTI CAPI</div>
+      <div class="main-title">THE DON</div>
+      <div class="quote">"I don't make threats. I make promises... and graves."</div>
+    </div>
+    
+    <h2>THE INNER CIRCLE</h2>
+    <p>Every Don needs his trusted lieutenants. These are the men who execute orders without question, who handle business with precision, and who keep the family strong. Loyalty is rewarded. Betrayal is punished.</p>
+    
+    <div class="crew-grid">
+      <div class="crew-card">
+        <div class="crew-icon"><i class="fas fa-user-secret"></i></div>
+        <h3>Parull Disinii</h3>
+        <p>The Consigliere. When you need problems solved quietly, he's your man.</p>
+        <p><em>"Silence is golden, but duct tape is silver."</em></p>
+        <a href="https://wa.me/6285883204447" class="whatsapp-link">Contact: wa.me/6285883204447</a>
+        <a href="#" class="meeting-btn">REQUEST MEETING</a>
+      </div>
+      
+      <div class="crew-card">
+        <div class="crew-icon"><i class="fas fa-crown"></i></div>
+        <h3>rraaww</h3>
+        <p>The Mafia Princess. The only woman Don trusts with his empire.</p>
+        <p><em>"I may wear a crown, but I still pull the trigger myself."</em></p>
+        <a href="https://wa.me/6288809711359" class="whatsapp-link">Contact: wa.me/6288809711359</a>
+        <a href="#" class="meeting-btn">REQUEST AUDIENCE</a>
+      </div>
+      
+      <div class="crew-card">
+        <div class="crew-icon"><i class="fas fa-money-bill-wave"></i></div>
+        <h3>Relzzz</h3>
+        <p>The Money Man. Launders the profits and keeps the books clean.</p>
+        <p><em>"Follow the money... to the bottom of the river."</em></p>
+        <a href="https://wa.me/6287826820085" class="whatsapp-link">Contact: wa.me/6287826820085</a>
+        <a href="#" class="meeting-btn">REQUEST MEETING</a>
+      </div>
+      
+      <div class="crew-card">
+        <div class="crew-icon"><i class="fas fa-laptop-code"></i></div>
+        <h3>I`iyannz</h3>
+        <p>The Tech Guy. Handles all the digital operations and cyber hits.</p>
+        <p><em>"I can erase your life with a keystroke."</em></p>
+        <a href="https://wa.me/6283829785032" class="whatsapp-link">Contact: wa.me/6283829785032</a>
+        <a href="#" class="meeting-btn">REQUEST MEETING</a>
+      </div>
+      
+      <div class="crew-card">
+        <div class="crew-icon"><i class="fas fa-ghost"></i></div>
+        <h3>null</h3>
+        <p>The Ghost. He doesn't exist... until he's standing behind you.</p>
+        <p><em>"You'll never see me coming."</em></p>
+        <a href="https://wa.me/6285179000370" class="whatsapp-link">Contact: wa.me/6285179000370</a>
+        <a href="#" class="meeting-btn">REQUEST MEETING</a>
+      </div>
+    </div>
+    
+    <h2>FAMILY CODE</h2>
+    <p>Respect is earned. Fear is given. Loyalty is absolute. The family comes before all else. These are the laws we live by, the code that keeps us strong.</p>
+    
+    <p>Cross us, and you'll disappear. Betray us, and you'll beg for death. But stand with us, and you'll have power, protection, and family for life.</p>
+    
+    <h2>FAMILY TERRITORIES</h2>
+    <div class="affiliations">
+      <div class="affiliation-badge">UNDERWORLD OPERATIONS</div>
+      <div class="affiliation-badge">DIGITAL FRONTS</div>
+      <div class="affiliation-badge">SHADOW NETWORK</div>
+    </div>
+  </main>
+
+  <script>
+    // Loading screen with progress bar
+    document.addEventListener('DOMContentLoaded', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const loadingProgress = document.getElementById('loadingProgress');
+      
+      let progress = 0;
+      const loadingInterval = setInterval(() => {
+        progress += Math.random() * 15;
+        loadingProgress.style.width = Math.min(progress, 100) + '%';
+        
+        if (progress >= 100) {
+          clearInterval(loadingInterval);
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 1000);
+        }
+      }, 200);
+
+      // Create random blood drips
+      for (let i = 0; i < 10; i++) {
+        const drip = document.createElement('div');
+        drip.className = 'blood-drip';
+        drip.style.left = Math.random() * 100 + '%';
+        drip.style.animationDelay = Math.random() * 5 + 's';
+        drip.style.animationDuration = 5 + Math.random() * 10 + 's';
+        document.body.appendChild(drip);
+      }
+    });
+
+    // Ensure loading screen doesn't interfere with clicks
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      loadingScreen.style.pointerEvents = 'none';
+    });
+
+    // Meeting button functionality
+    document.querySelectorAll('.meeting-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const member = this.parentElement.querySelector('h3').textContent;
+        alert(`Your request for a meeting with ${member} has been sent. You'll be contacted if approved.`);
+      });
+    });
+  </script>
+</body>
+</html>
