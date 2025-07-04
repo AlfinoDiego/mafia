@@ -786,19 +786,22 @@
       }
     }
 
+    
     function checkAuth() {
-      if (localStorage.getItem('loggedIn')) {
-        const username = localStorage.getItem('username');
-        const role = localStorage.getItem('userRole');
-        
-        // Update user display
+      if (localStorage.getItem('loggedIn') === 'true') {
         updateUserDisplay();
         document.getElementById('logoutMenu').style.display = 'block';
-        
-        // Show edit controls based on role
+        document.getElementById('authModal').style.display = 'none';
+
+        const role = localStorage.getItem('userRole');
         if (role === 'admin' || role === 'owner') {
           document.getElementById('editControls').style.display = 'block';
         }
+      } else {
+        document.getElementById('authModal').style.display = 'flex';
+      }
+    }
+
       } else {
         document.getElementById('authModal').style.display = 'flex';
       }
@@ -840,7 +843,7 @@
         document.getElementById('logoutMenu').style.display = 'none';
         document.getElementById('editControls').style.display = 'none';
         document.getElementById('userInfo').style.display = 'none';
-        window.location.replace("index.html");
+        alert("You've disappeared from the streets. Come back when you're ready to do business.");
       }
     }
 
@@ -970,24 +973,6 @@
 
     function loadSavedContent() {
       // No news section to load anymore
-    }
-
-    // Handle back button behavior
-    document.addEventListener("backbutton", handleBackButton, false);
-
-    function handleBackButton(e) {
-      if (window.location.pathname.includes("index.html") || 
-          window.location.pathname.includes("register.html")) {
-        e.preventDefault();
-        navigator.app.exitApp();
-      } else {
-        history.go(-1);
-      }
-    }
-
-    // Replace all redirects with location.replace
-    function safeRedirect(url) {
-      window.location.replace(url);
     }
   </script>
 </body>
