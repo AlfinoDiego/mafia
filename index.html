@@ -840,7 +840,7 @@
         document.getElementById('logoutMenu').style.display = 'none';
         document.getElementById('editControls').style.display = 'none';
         document.getElementById('userInfo').style.display = 'none';
-        alert("You've disappeared from the streets. Come back when you're ready to do business.");
+        window.location.replace("index.html");
       }
     }
 
@@ -970,6 +970,24 @@
 
     function loadSavedContent() {
       // No news section to load anymore
+    }
+
+    // Handle back button behavior
+    document.addEventListener("backbutton", handleBackButton, false);
+
+    function handleBackButton(e) {
+      if (window.location.pathname.includes("index.html") || 
+          window.location.pathname.includes("register.html")) {
+        e.preventDefault();
+        navigator.app.exitApp();
+      } else {
+        history.go(-1);
+      }
+    }
+
+    // Replace all redirects with location.replace
+    function safeRedirect(url) {
+      window.location.replace(url);
     }
   </script>
 </body>
