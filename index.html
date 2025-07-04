@@ -417,6 +417,68 @@
       visibility: visible;
     }
 
+    /* === EDIT CONTROLS === */
+    .edit-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      display: none;
+    }
+
+    .edit-btn {
+      background: var(--blood);
+      color: var(--light);
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-family: 'Old Standard TT', serif;
+    }
+
+    .edit-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .edit-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .edit-modal-content {
+      background: var(--darker);
+      padding: 20px;
+      width: 80%;
+      max-width: 600px;
+      border: 1px solid var(--blood);
+    }
+
+    .edit-modal-content textarea {
+      width: 100%;
+      height: 300px;
+      background: var(--dark);
+      color: var(--light);
+      border: 1px solid var(--blood);
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .edit-modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
     /* === RESPONSIVE DESIGN === */
     @media (max-width: 992px) {
       .content {
@@ -445,23 +507,91 @@
         font-size: 1.8rem;
       }
     }
+
+    /* === USER INFO STYLES === */
+    .user-info {
+      padding: 15px 25px;
+      margin: 20px 0;
+      border-top: 1px solid var(--blood);
+      border-bottom: 1px solid var(--blood);
+      background: rgba(90, 0, 0, 0.1);
+    }
+
+    .user-name {
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
+
+    .user-role {
+      color: var(--light);
+      font-size: 0.8rem;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    /* === AUTH MODAL STYLES === */
+    .auth-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      background: var(--dark);
+      color: var(--light);
+      border: 1px solid var(--blood);
+    }
+
+    .auth-button {
+      width: 100%;
+      padding: 12px;
+      background: var(--blood);
+      color: var(--light);
+      border: none;
+      cursor: pointer;
+      font-family: 'Old Standard TT', serif;
+    }
+
+    .auth-button:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .auth-toggle {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--blood);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--dark);
+      color: var(--light);
+      border: none;
+      font-family: 'Old Standard TT', serif;
+    }
+
+    .auth-tab.active {
+      background: var(--blood);
+      color: var(--light);
+    }
   </style>
 </head>
 <body>
   <!-- ENHANCED LOADING SCREEN -->
   <div class="loading-screen" id="loadingScreen">
     <div class="loading-container">
-      <!-- Animated bullets orbiting -->
       <div class="loading-bullet"></div>
       <div class="loading-bullet"></div>
       <div class="loading-bullet"></div>
       
-      <!-- Floating money bills -->
       <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
       <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
       <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
       
-      <!-- Content -->
       <div class="loading-logo">DIEGO'S SYNDICATE</div>
       <div class="loading-subtitle">Secret Business</div>
       <div class="loading-bar-container">
@@ -492,12 +622,23 @@
       <h2><i class="fas fa-handshake"></i> THE FAMILY</h2>
       <p class="motto">"Plata o Plomo"</p>
     </div>
-    <ul>
+    
+    <!-- User Info Section -->
+    <div class="user-info" id="userInfo" style="display:none;">
+      <div class="user-name" id="displayName"></div>
+      <div class="user-role" id="displayRole"></div>
+    </div>
+    
+    <ul id="menuList">
       <li><a href="aboutme.html"><i class="fas fa-user-secret"></i> About The Don</a></li>
+      <li><a href="cali.html"><i class="fas fa-user-tie"></i> Cali – Right Hand</a></li>
       <li><a href="testimoni.html"><i class="fas fa-scroll"></i> Client Testimonials</a></li>
       <li><a href="service.html"><i class="fas fa-gun"></i> Special Services</a></li>
       <li><a href="payment.html"><i class="fas fa-money-bill-wave"></i> Payment Methods</a></li>
       <li><a href="secret.html"><i class="fas fa-briefcase"></i> Underground Operations</a></li>
+      <li><a href="news.html"><i class="fas fa-newspaper"></i> Blog & News</a></li>
+      <li><a href="requests.html"><i class="fas fa-question"></i> Requests/Saran</a></li>
+      <li id="logoutMenu" style="display:none; margin-top:20px; text-align:center;"><a href="#" onclick="vanish()"><i class="fas fa-user-ninja"></i> Vanish from the Streets</a></li>
     </ul>
   </aside>
 
@@ -506,12 +647,65 @@
 
   <!-- MAIN CONTENT -->
   <main class="content">
-    <h1>PERTEMUAN RAHASIA</h1>
+    <h1 id="mainTitle">PERTEMUAN RAHASIA</h1>
     
-    <p>Di dunia bawah tanah ini, setiap pertemuan adalah rahasia yang dijaga dengan nyawa. Diego's Syndicate mengoperasikan bisnis dengan kode keheningan yang tak tergoyahkan. Kepercayaan dibangun dengan darah, dan pengkhianatan dihukum dengan cara yang tak terkatakan.</p>
+    <p id="contentParagraph1">Di dunia bawah tanah ini, setiap pertemuan adalah rahasia yang dijaga dengan nyawa. Diego's Syndicate mengoperasikan bisnis dengan kode keheningan yang tak tergoyahkan. Kepercayaan dibangun dengan darah, dan pengkhianatan dihukum dengan cara yang tak terkatakan.</p>
     
-    <p>Layanan kami eksklusif untuk mereka yang memahami aturan tak tertulis. Ketika Anda membutuhkan solusi permanen untuk masalah sementara, kami adalah jawaban yang tak terucapkan.</p>
+    <p id="contentParagraph2">Layanan kami eksklusif untuk mereka yang memahami aturan tak tertulis. Ketika Anda membutuhkan solusi permanen untuk masalah sementara, kami adalah jawaban yang tak terucapkan.</p>
   </main>
+
+  <!-- EDIT CONTROLS (Only visible for admin/owner) -->
+  <div class="edit-controls" id="editControls">
+    <button class="edit-btn" onclick="showEditOptions()"><i class="fas fa-cog"></i> Edit Settings</button>
+  </div>
+
+  <!-- EDIT OPTIONS MODAL -->
+  <div class="edit-modal" id="editOptionsModal">
+    <div class="edit-modal-content">
+      <h3 style="color: var(--gold);">What do you want to edit?</h3>
+      <div id="editOptionsList" class="edit-options">
+        <!-- Options will be added here dynamically based on role -->
+      </div>
+      <div class="edit-modal-buttons">
+        <button class="edit-btn" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div id="authModal" style="display:none; position:fixed; z-index:10000; background:rgba(0,0,0,0.9); top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center;">
+    <div style="background:#0a0a0a; padding:30px; border:2px solid var(--blood); width:320px; box-shadow: 0 0 15px rgba(139,0,0,0.6); text-align:center;">
+      <h2 style="color:var(--gold); font-family:'Cinzel Decorative',cursive; margin-bottom:10px;">Underground Access</h2>
+      <p style="color:var(--light); font-size:0.9rem; margin-bottom:20px;">
+        Enter with respect. Only family knows the codes.
+      </p>
+      
+      <div class="auth-toggle">
+        <button class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      
+      <div id="signinForm">
+        <input type="text" id="username" placeholder="Username" class="auth-input" />
+        <input type="password" id="password" placeholder="Password" class="auth-input" />
+        <button onclick="loginUser()" class="auth-button">Enter the Syndicate</button>
+      </div>
+      
+      <div id="signupForm" style="display:none;">
+        <input type="text" id="newUsername" placeholder="Username" class="auth-input" />
+        <input type="password" id="newPassword" placeholder="Password" class="auth-input" />
+        <button onclick="registerUser()" class="auth-button">Join the Family</button>
+      </div>
+      
+      <div style="margin-top:15px; font-size:0.8rem; color:#999;">
+        <p><em>username dan password ada di saluran</em></p>
+        <a href="https://whatsapp.com/channel/0029Vb6Pl0VBA1errm9iov3h" target="_blank"
+           style="display:inline-block; margin-top:10px; background:#8b6e3d; color:#000; padding:8px 12px; text-decoration:none; font-weight:bold; border-radius:4px;">
+          🔗 Go to The Channel
+        </a>
+      </div>
+    </div>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -529,6 +723,7 @@
           loadingScreen.style.opacity = '0';
           setTimeout(() => {
             loadingScreen.style.display = 'none';
+            checkAuth();
           }, 1000);
         }
       }, 200);
@@ -565,7 +760,217 @@
           document.body.removeChild(splash);
         }, 1500);
       });
+
+      // Initialize users in localStorage if not exists
+      if (!localStorage.getItem('users')) {
+        localStorage.setItem('users', JSON.stringify([]));
+      }
+      
+      // Load saved content from localStorage
+      loadSavedContent();
+      updateUserDisplay();
     });
+
+    // AUTH FUNCTIONS
+    function switchAuthTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('signinForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'none';
+      
+      if (tab === 'signin') {
+        document.querySelector('.auth-tab:first-child').classList.add('active');
+        document.getElementById('signinForm').style.display = 'block';
+      } else {
+        document.querySelector('.auth-tab:last-child').classList.add('active');
+        document.getElementById('signupForm').style.display = 'block';
+      }
+    }
+
+    function checkAuth() {
+      if (localStorage.getItem('loggedIn')) {
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('userRole');
+        
+        // Update user display
+        updateUserDisplay();
+        document.getElementById('logoutMenu').style.display = 'block';
+        
+        // Show edit controls based on role
+        if (role === 'admin' || role === 'owner') {
+          document.getElementById('editControls').style.display = 'block';
+        }
+      } else {
+        document.getElementById('authModal').style.display = 'flex';
+      }
+    }
+
+    function updateUserDisplay() {
+      if (localStorage.getItem('loggedIn')) {
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('userRole');
+        
+        // Set display name based on role
+        let displayName = username.toUpperCase();
+        let roleName = '';
+        
+        if (role === 'owner') {
+          displayName = 'THE DON - GIA';
+          roleName = 'IL CAPO DI TUTTI CAPI (The Boss of All Bosses)';
+        } else if (role === 'admin') {
+          displayName = username.toUpperCase();
+          roleName = 'CAPOREGIME (Underboss)';
+        } else {
+          displayName = username.toUpperCase();
+          roleName = 'SOLDIER (Made Man)';
+        }
+        
+        document.getElementById('displayName').textContent = displayName;
+        document.getElementById('displayRole').textContent = roleName;
+        document.getElementById('userInfo').style.display = 'block';
+      } else {
+        document.getElementById('userInfo').style.display = 'none';
+      }
+    }
+
+    function vanish() {
+      if (confirm("Are you sure you want to vanish? The Syndicate will remember...")) {
+        localStorage.removeItem('loggedIn');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+        document.getElementById('logoutMenu').style.display = 'none';
+        document.getElementById('editControls').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'none';
+        alert("You've disappeared from the streets. Come back when you're ready to do business.");
+      }
+    }
+
+    function loginUser() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      // Check against registered users first
+      const users = JSON.parse(localStorage.getItem('users'));
+      const foundUser = users.find(u => u.username.toLowerCase() === user.toLowerCase());
+      
+      if (foundUser) {
+        // User terdaftar, validasi password
+        if ((foundUser.role === 'owner' && pass === 'ownerpikoy078') ||
+            (foundUser.role === 'admin' && pass === 'admindgteam') ||
+            (foundUser.role === 'member' && pass === 'underground')) {
+          authenticateUser(user, foundUser.role);
+          return;
+        }
+      }
+      
+      // Fallback untuk akun khusus
+      if (user.toLowerCase() === 'secretmemberdg' && pass === 'underground') {
+        authenticateUser(user, 'member');
+      } else if (pass === 'ownerpikoy078') {
+        // Cek apakah owner sudah ada
+        const ownerExists = users.some(u => u.role === 'owner');
+        if (ownerExists && !foundUser) {
+          alert("The Syndicate already has a Don. Only one owner allowed.");
+          return;
+        }
+        authenticateUser(user, 'owner');
+      } else if (pass === 'admindgteam') {
+        authenticateUser(user, 'admin');
+      } else {
+        alert("Invalid credentials. You're not family.");
+      }
+    }
+
+    function registerUser() {
+      const user = document.getElementById('newUsername').value.trim();
+      const pass = document.getElementById('newPassword').value.trim();
+      const role = determineRoleFromPassword(pass);
+
+      // Validasi owner hanya boleh 1
+      if (role === 'owner') {
+        const users = JSON.parse(localStorage.getItem('users'));
+        const ownerExists = users.some(u => u.role === 'owner');
+        
+        if (ownerExists) {
+          alert("The Syndicate already has a Don. Only one owner allowed.");
+          return;
+        }
+      }
+
+      if (user && pass) {
+        // Save user data
+        const users = JSON.parse(localStorage.getItem('users'));
+        users.push({ username: user, role });
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        // Auto login
+        authenticateUser(user, role);
+      } else {
+        alert("Please fill all fields to join the family.");
+      }
+    }
+
+    function determineRoleFromPassword(pass) {
+      if (pass === 'ownerpikoy078') return 'owner';
+      if (pass === 'admindgteam') return 'admin';
+      return 'member';
+    }
+
+    function authenticateUser(username, role) {
+      localStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('username', username);
+      localStorage.setItem('userRole', role);
+
+      document.getElementById('authModal').style.display = 'none';
+      updateUserDisplay();
+      document.getElementById('logoutMenu').style.display = 'block';
+      
+      // Show appropriate edit controls
+      if (role === 'admin' || role === 'owner') {
+        document.getElementById('editControls').style.display = 'block';
+      }
+      
+      // Add to users list if not exists
+      const users = JSON.parse(localStorage.getItem('users'));
+      if (!users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+        users.push({ username, role });
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+    }
+
+    // EDIT FUNCTIONS
+    function showEditOptions() {
+      const role = localStorage.getItem('userRole');
+      const optionsList = document.getElementById('editOptionsList');
+      optionsList.innerHTML = '';
+
+      if (role === 'admin') {
+        optionsList.innerHTML = `
+          <button class="edit-btn" onclick="location.href='testimoni.html'"><i class="fas fa-scroll"></i> Edit Testimonials</button>
+          <button class="edit-btn" onclick="location.href='requests.html'"><i class="fas fa-question"></i> Manage Q&A</button>
+        `;
+      } else if (role === 'owner') {
+        optionsList.innerHTML = `
+          <button class="edit-btn" onclick="location.href='aboutme.html'"><i class="fas fa-user-secret"></i> Edit About The Don</button>
+          <button class="edit-btn" onclick="location.href='cali.html'"><i class="fas fa-user-tie"></i> Edit Cali</button>
+          <button class="edit-btn" onclick="location.href='testimoni.html'"><i class="fas fa-scroll"></i> Edit Testimonials</button>
+          <button class="edit-btn" onclick="location.href='service.html'"><i class="fas fa-gun"></i> Edit Services</button>
+          <button class="edit-btn" onclick="location.href='payment.html'"><i class="fas fa-money-bill-wave"></i> Edit Payment Methods</button>
+          <button class="edit-btn" onclick="location.href='secret.html'"><i class="fas fa-briefcase"></i> Edit Underground Operations</button>
+          <button class="edit-btn" onclick="location.href='news.html'"><i class="fas fa-newspaper"></i> Edit News</button>
+          <button class="edit-btn" onclick="location.href='requests.html'"><i class="fas fa-question"></i> View Requests</button>
+        `;
+      }
+
+      document.getElementById('editOptionsModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editOptionsModal').style.display = 'none';
+    }
+
+    function loadSavedContent() {
+      // No news section to load anymore
+    }
   </script>
 </body>
 </html>

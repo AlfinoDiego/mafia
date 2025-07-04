@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>The Black Ledger</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --blood: #3a0000;
+      --dried-blood: #5a0000;
+      --gold: #8b6e3d;
+      --bullet: #5a5a5a;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --light-gold: #d4af37;
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Old Standard TT', serif;
+      color: var(--light);
+      line-height: 1.5;
+      background: var(--darker);
+      touch-action: pan-y;
+      font-size: 14px;
+    }
+
+    .mafia-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: url('https://files.catbox.moe/ov2zvv.jpg') no-repeat center center/cover;
+      opacity: 0.7;
+      filter: brightness(0.4) contrast(1.3);
+      transform: scale(1);
+      transition: transform 0.2s ease-out;
+    }
+
+    header {
+      padding: 15px;
+      background: rgba(5, 5, 5, 0.97);
+      border-bottom: 2px solid var(--blood);
+      text-align: center;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--light-gold);
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.7);
+    }
+
+    .content {
+      padding: 25px 15px;
+      max-width: 100%;
+      overflow-y: auto;
+      height: calc(100vh - 70px);
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--light-gold);
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 2px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      position: relative;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 25%;
+      width: 50%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blood), transparent);
+    }
+
+    .quote {
+      color: var(--blood);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 3px rgba(0,0,0,0.7);
+    }
+
+    .news-container {
+      margin-bottom: 40px;
+    }
+
+    .add-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: var(--blood);
+      color: var(--light-gold);
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 1.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 0 15px rgba(139, 0, 0, 0.7);
+      transition: all 0.3s ease;
+    }
+
+    .add-btn:hover {
+      background: var(--dried-blood);
+      transform: rotate(90deg);
+    }
+
+    .news-item {
+      background: rgba(10, 10, 10, 0.9);
+      border-left: 4px solid var(--blood);
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+
+    .news-item:hover {
+      transform: translateX(5px);
+    }
+
+    .news-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .news-title {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--light-gold);
+      font-size: 1.2rem;
+      flex-grow: 1;
+      letter-spacing: 1px;
+      text-shadow: 0 0 3px rgba(139, 0, 0, 0.5);
+    }
+
+    .news-content {
+      padding: 15px;
+      border-left: 2px solid var(--blood);
+      margin-top: 15px;
+      font-size: 0.95rem;
+      color: var(--light);
+      line-height: 1.7;
+      background: rgba(20, 20, 20, 0.5);
+      position: relative;
+    }
+
+    .news-content::before {
+      content: '»';
+      position: absolute;
+      left: 5px;
+      top: 15px;
+      color: var(--blood);
+      font-size: 1.2rem;
+    }
+
+    .news-meta {
+      font-size: 0.75rem;
+      color: var(--bullet);
+      margin-top: 15px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      border-top: 1px dashed var(--dried-blood);
+      padding-top: 10px;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-btn {
+      background: none;
+      border: none;
+      color: var(--light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0 10px;
+      line-height: 1;
+      transition: all 0.3s ease;
+    }
+
+    .dropdown-btn:hover {
+      color: var(--blood);
+      transform: rotate(90deg);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: var(--darker);
+      min-width: 150px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+      z-index: 1;
+      border: 1px solid var(--blood);
+    }
+
+    .dropdown-content button {
+      color: var(--light);
+      padding: 10px 15px;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Old Standard TT', serif;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dropdown-content button i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .dropdown-content button:hover {
+      background: var(--blood);
+      letter-spacing: 1px;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .form-container {
+      background: rgba(10, 10, 10, 0.95);
+      padding: 20px;
+      border: 1px solid var(--blood);
+      margin-top: 20px;
+      display: none;
+      box-shadow: var(--shadow);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid var(--blood);
+      color: var(--light);
+      font-family: 'Old Standard TT', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--light-gold);
+      box-shadow: 0 0 10px rgba(139, 110, 61, 0.5);
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .form-submit {
+      background: linear-gradient(to right, var(--blood), var(--dried-blood));
+      color: var(--light-gold);
+      border: none;
+      padding: 12px 25px;
+      font-family: 'Cinzel Decorative', cursive;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto 0;
+      width: 100%;
+      max-width: 200px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+    }
+
+    .form-submit:hover {
+      background: linear-gradient(to right, var(--dried-blood), var(--blood));
+      letter-spacing: 2px;
+    }
+
+    .user-info {
+      padding: 15px;
+      background: rgba(90, 0, 0, 0.15);
+      border-top: 1px solid var(--blood);
+      border-bottom: 1px solid var(--blood);
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .user-info::before, .user-info::after {
+      content: '⚔️';
+      position: absolute;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .user-info::before {
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .user-info::after {
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .user-name {
+      color: var(--light-gold);
+      font-weight: bold;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      margin-bottom: 3px;
+      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+    }
+
+    .user-role {
+      color: var(--light);
+      font-size: 0.75rem;
+      font-style: italic;
+      letter-spacing: 0.5px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+      .content {
+        padding: 30px;
+        max-width: 750px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: 2.2rem;
+      }
+      .news-item {
+        padding: 25px;
+      }
+    }
+
+    /* Blood droplet animation */
+    @keyframes bloodDrip {
+      0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+      50% { opacity: 0.7; }
+      100% { transform: translateY(0) scale(1); opacity: 0; }
+    }
+
+    .blood-drip {
+      position: absolute;
+      color: var(--blood);
+      font-size: 1.2rem;
+      animation: bloodDrip 1s forwards;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="mafia-bg" id="bg"></div>
+
+  <header>
+    <div class="logo">BLOOD IN, BLOOD OUT</div>
+  </header>
+
+  <main class="content">
+    <!-- User Info Display -->
+    <div class="user-info" id="userInfo" style="display: none;">
+      <div class="user-name" id="displayName"></div>
+      <div class="user-role" id="displayRole"></div>
+    </div>
+    
+    <h1>THE BLACK LEDGER</h1>
+    <div class="quote">
+      "What's written here stays here. A loose tongue gets cut out."
+    </div>
+    
+    <div class="news-container" id="newsContainer">
+      <!-- News will be added here dynamically -->
+    </div>
+    
+    <button class="add-btn" id="addBtn" style="display: none;" title="Add new entry">+</button>
+    
+    <div class="form-container" id="newsForm">
+      <div class="form-group">
+        <input type="text" class="form-input" id="newsTitle" placeholder="Mark it in blood..." required>
+      </div>
+      <div class="form-group">
+        <textarea class="form-textarea" id="newsContent" placeholder="The family needs to know..." required></textarea>
+      </div>
+      <button type="submit" class="form-submit" id="submitBtn">
+        <i class="fas fa-skull"></i> SEAL IT
+      </button>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get user data from localStorage (connected to fixindexlast.html)
+      const currentUserId = localStorage.getItem('username') || 'guest_' + Math.floor(Math.random() * 1000);
+      const userRole = localStorage.getItem('userRole') || 'member';
+      
+      // Display user info - REMOVED DIDGOW REFERENCE
+      const displayName = document.getElementById('displayName');
+      const displayRole = document.getElementById('displayRole');
+      const userInfo = document.getElementById('userInfo');
+      const addBtn = document.getElementById('addBtn');
+      
+      if (localStorage.getItem('loggedIn')) {
+        userInfo.style.display = 'block';
+        if (userRole === 'owner') {
+          displayName.textContent = 'THE DON';
+          displayRole.textContent = 'IL CAPO DI TUTTI CAPI';
+          addBtn.style.display = 'flex';
+        } else if (userRole === 'admin') {
+          displayName.textContent = 'UNDERBOSS';
+          displayRole.textContent = 'CAPOREGIME';
+          addBtn.style.display = 'flex';
+        } else {
+          displayName.textContent = 'SOLDIER';
+          displayRole.textContent = 'ASSOCIATE';
+        }
+      } else {
+        alert("You don't have permission to view this ledger.");
+        window.location.href = 'fixindexlast.html';
+      }
+
+      const newsContainer = document.getElementById('newsContainer');
+      const newsForm = document.getElementById('newsForm');
+      const newsTitle = document.getElementById('newsTitle');
+      const newsContent = document.getElementById('newsContent');
+      const submitBtn = document.getElementById('submitBtn');
+      const bg = document.getElementById('bg');
+
+      // Load saved news from localStorage
+      let news = JSON.parse(localStorage.getItem('syndicate_news')) || [];
+      
+      // Add sample news if empty (for testing)
+      if (news.length === 0 && (userRole === 'owner' || userRole === 'admin')) {
+        news = [
+          {
+            id: 1,
+            title: "TERRITORY TAKEOVER - SOUTH SIDE",
+            content: "The Esposito rats dared to cross our borders. Their bodies now fertilize the docks. All captains report for cleanup details at the usual spot. Bring shovels and lye.",
+            date: new Date().toISOString(),
+            author: 'THE_DON',
+            authorRole: 'owner'
+          },
+          {
+            id: 2,
+            content: "New shipment arrives Thursday at midnight. Warehouse 42. Any man who breathes a word of this to outsiders will lose his tongue before sunrise. Payment in unmarked bills only.",
+            date: new Date().toISOString(),
+            author: 'GHOST',
+            authorRole: 'admin'
+          },
+          {
+            id: 3,
+            title: "RAT ALERT",
+            content: "We have a traitor in our ranks. Last seen wearing a red tie. $50,000 for his head delivered to me personally. No questions asked.",
+            date: new Date().toISOString(),
+            author: 'THE_DON',
+            authorRole: 'owner'
+          }
+        ];
+        saveNews();
+      }
+      
+      renderNews();
+
+      // Toggle news form (only for admin/owner)
+      addBtn.addEventListener('click', function() {
+        if (userRole === 'admin' || userRole === 'owner') {
+          newsForm.style.display = newsForm.style.display === 'block' ? 'none' : 'block';
+          if (newsForm.style.display === 'block') {
+            newsTitle.focus();
+          }
+        }
+      });
+
+      // Submit new news
+      submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const title = newsTitle.value.trim();
+        const content = newsContent.value.trim();
+        
+        if (content) { // Content is required, title is optional
+          const newNews = {
+            id: Date.now(),
+            title: title || "NO TITLE", // Fallback if no title
+            content: content,
+            date: new Date().toISOString(),
+            author: currentUserId,
+            authorRole: userRole
+          };
+          news.push(newNews);
+          saveNews();
+          renderNews();
+          newsTitle.value = '';
+          newsContent.value = '';
+          newsForm.style.display = 'none';
+          
+          // Blood drip animation effect
+          const drip = document.createElement('div');
+          drip.className = 'blood-drip';
+          drip.innerHTML = '💧';
+          drip.style.left = (submitBtn.offsetLeft + submitBtn.offsetWidth/2) + 'px';
+          drip.style.top = (submitBtn.offsetTop + submitBtn.offsetHeight) + 'px';
+          document.body.appendChild(drip);
+          setTimeout(() => {
+            document.body.removeChild(drip);
+          }, 1000);
+        }
+      });
+
+      // Smooth zoom effect on scroll
+      window.addEventListener('scroll', function() {
+        const scrollPosition = window.scrollY;
+        const scale = 1 + (scrollPosition * 0.00015);
+        bg.style.transform = `scale(${Math.min(scale, 1.02)})`;
+      });
+
+      function renderNews() {
+        newsContainer.innerHTML = '';
+        if (news.length === 0) {
+          newsContainer.innerHTML = `
+            <div class="news-item" style="text-align:center;color:#ff6666;">
+              The ledger is empty... for now.
+            </div>`;
+          return;
+        }
+        
+        // Sort by newest first
+        news.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        news.forEach(item => {
+          const newsEl = document.createElement('div');
+          newsEl.className = 'news-item';
+          
+          const newsHeader = document.createElement('div');
+          newsHeader.className = 'news-header';
+          
+          const newsTitleEl = document.createElement('div');
+          newsTitleEl.className = 'news-title';
+          newsTitleEl.textContent = item.title || "DIRECTIVE";
+          
+          const dropdown = document.createElement('div');
+          dropdown.className = 'dropdown';
+          
+          // Only show controls for admin/owner
+          if (userRole === 'admin' || userRole === 'owner') {
+            const dropbtn = document.createElement('button');
+            dropbtn.className = 'dropdown-btn';
+            dropbtn.innerHTML = '⋮';
+            dropbtn.title = 'Actions';
+            
+            const dropdownContent = document.createElement('div');
+            dropdownContent.className = 'dropdown-content';
+            
+            const editBtn = document.createElement('button');
+            editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+            editBtn.onclick = () => editNews(item.id);
+            dropdownContent.appendChild(editBtn);
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Erase';
+            deleteBtn.onclick = () => deleteNews(item.id);
+            dropdownContent.appendChild(deleteBtn);
+            
+            dropdown.appendChild(dropbtn);
+            dropdown.appendChild(dropdownContent);
+          }
+          
+          newsHeader.appendChild(newsTitleEl);
+          if (userRole === 'admin' || userRole === 'owner') {
+            newsHeader.appendChild(dropdown);
+          }
+          
+          const contentEl = document.createElement('div');
+          contentEl.className = 'news-content';
+          contentEl.textContent = item.content;
+          
+          const meta = document.createElement('div');
+          meta.className = 'news-meta';
+          meta.textContent = `${new Date(item.date).toLocaleString()} • Written in blood by: ${item.author} (${item.authorRole.toUpperCase()})`;
+          
+          newsEl.appendChild(newsHeader);
+          newsEl.appendChild(contentEl);
+          newsEl.appendChild(meta);
+          
+          newsContainer.appendChild(newsEl);
+        });
+      }
+
+      function editNews(id) {
+        const newsItem = news.find(item => item.id === id);
+        if (newsItem) {
+          newsTitle.value = newsItem.title || "";
+          newsContent.value = newsItem.content;
+          newsForm.style.display = 'block';
+          window.scrollTo(0, 0);
+          
+          // Remove the old news
+          news = news.filter(item => item.id !== id);
+          saveNews();
+        }
+      }
+
+      function deleteNews(id) {
+        if (confirm('This cannot be undone. Erase this entry?')) {
+          // Blood splatter effect
+          for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+              const drip = document.createElement('div');
+              drip.className = 'blood-drip';
+              drip.innerHTML = '💧';
+              drip.style.left = Math.random() * window.innerWidth + 'px';
+              drip.style.top = '50px';
+              document.body.appendChild(drip);
+              setTimeout(() => {
+                document.body.removeChild(drip);
+              }, 1000);
+            }, i * 200);
+          }
+          
+          setTimeout(() => {
+            news = news.filter(item => item.id !== id);
+            saveNews();
+            renderNews();
+          }, 1000);
+        }
+      }
+
+      function saveNews() {
+        localStorage.setItem('syndicate_news', JSON.stringify(news));
+      }
+    });
+  </script>
+</body>
+</html>
