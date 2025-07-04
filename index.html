@@ -883,54 +883,40 @@
       }
     }
 
+    
     function registerUser() {
       const user = document.getElementById('newUsername').value.trim();
       const pass = document.getElementById('newPassword').value.trim();
       const role = determineRoleFromPassword(pass);
 
-      // Validasi owner hanya boleh 1
+      if (!user || !pass) {
+        alert("Please fill all fields to join the family.");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem('users') || '[]');
+
       if (role === 'owner') {
-        const users = JSON.parse(localStorage.getItem('users'));
         const ownerExists = users.some(u => u.role === 'owner');
-        
         if (ownerExists) {
           alert("The Syndicate already has a Don. Only one owner allowed.");
           return;
         }
       }
 
-      if (user && pass) {
-        // Save user data
-        const users = JSON.parse(localStorage.getItem('users'));
-        users.push({ username: user, role });
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        // Auto login
-        authenticateUser(user, role);
-      } else {
-        alert("Please fill all fields to join the family.");
-      }
+      users.push({ username: user, role });
+      localStorage.setItem('users', JSON.stringify(users));
+
+      authenticateUser(user, role);
     }
 
     function determineRoleFromPassword(pass) {
       if (pass === 'ownerpikoy078') return 'owner';
       if (pass === 'admindgteam') return 'admin';
-      return 'member';
+      if (pass === 'underground') return 'member';
+      return 'member'; // default role
     }
 
-    function authenticateUser(username, role) {
-      localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('username', username);
-      localStorage.setItem('userRole', role);
-
-      document.getElementById('authModal').style.display = 'none';
-      updateUserDisplay();
-      document.getElementById('logoutMenu').style.display = 'block';
-      
-      // Show appropriate edit controls
-      if (role === 'admin' || role === 'owner') {
-        document.getElementById('editControls').style.display = 'block';
-      }
       
       // Add to users list if not exists
       const users = JSON.parse(localStorage.getItem('users'));
