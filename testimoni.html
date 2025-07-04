@@ -33,6 +33,34 @@
       touch-action: manipulation;
     }
 
+    /* Navigation Buttons */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+
+    .nav-btn {
+      font-family: 'Cinzel Decorative', cursive;
+      background: rgba(90, 0, 0, 0.3);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .nav-btn:hover {
+      background: var(--blood);
+      color: var(--light);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(90, 0, 0, 0.5);
+    }
+
     /* Danger Zone Loading Screen */
     .loading-screen {
       position: fixed;
@@ -377,6 +405,16 @@
       .coming-soon::after {
         right: -30px;
       }
+
+      .nav-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -433,6 +471,13 @@
 
   <!-- Main Content -->
   <main class="content">
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+      <a href="cali.html" class="nav-btn"><i class="fas fa-arrow-left"></i> PREVIOUS</a>
+      <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> BACK TO MENU</a>
+      <a href="service.html" class="nav-btn">NEXT <i class="fas fa-arrow-right"></i></a>
+    </div>
+    
     <h1>CLIENT TESTIMONIALS</h1>
     
     <div class="coming-soon">

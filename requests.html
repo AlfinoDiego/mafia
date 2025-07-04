@@ -249,6 +249,39 @@
       font-style: italic;
     }
 
+    /* Navigation buttons */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin: 30px 0;
+      padding: 0 15px;
+    }
+
+    .nav-btn {
+      background: rgba(10, 10, 10, 0.9);
+      border: 1px solid var(--blood);
+      color: var(--light-gold);
+      padding: 10px 15px;
+      font-family: 'Cinzel Decorative', cursive;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .nav-btn:hover {
+      background: var(--blood);
+      letter-spacing: 2px;
+    }
+
+    .nav-btn i {
+      margin: 0 5px;
+    }
+
     @media (min-width: 768px) {
       body {
         font-size: 16px;
@@ -260,6 +293,13 @@
       }
       h1 {
         font-size: 1.5rem;
+      }
+      .nav-buttons {
+        padding: 0;
+      }
+      .nav-btn {
+        font-size: 0.9rem;
+        padding: 12px 20px;
       }
     }
   </style>
@@ -283,6 +323,12 @@
     
     <div class="qna-container" id="qnaContainer">
       <!-- Questions will be added here dynamically -->
+    </div>
+    
+    <div class="nav-buttons">
+      <a href="news.html" class="nav-btn"><i class="fas fa-arrow-left"></i> Previous</a>
+      <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+      <a href="#" class="nav-btn" style="visibility: hidden;">Next <i class="fas fa-arrow-right"></i></a>
     </div>
     
     <button class="add-btn" id="addBtn">+</button>
