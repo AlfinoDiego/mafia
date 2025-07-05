@@ -335,7 +335,6 @@
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
   const firebaseConfig = {
@@ -470,31 +469,22 @@
       }
     }
 
-    
-function loginUser() {
-  const user = document.getElementById('username').value.trim();
-  const pass = document.getElementById('password').value.trim();
-  const email = `${user}@syndicate.com`;
+    function loginUser() {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
 
-  firebase.auth().signInWithEmailAndPassword(email, pass)
-    .then((userCredential) => {
-      const uid = userCredential.user.uid;
-
-      firebase.database().ref('users/' + uid).once('value')
-        .then(snapshot => {
-          const data = snapshot.val();
-          if (data) {
-            authenticateUser(data.username, data.role);
-          } else {
-            alert("User not found.");
-          }
-        });
-    })
-    .catch((error) => {
-      alert("Login error: " + error.message);
-    });
-}
-
+      // Check against registered users first
+      const users = JSON.parse(localStorage.getItem('users'));
+      const foundUser = users.find(u => u.username.toLowerCase() === user.toLowerCase());
+      
+      if (foundUser) {
+        // User terdaftar, validasi password
+        if ((foundUser.role === 'owner' && pass === 'ownerpikoy078') ||
+            (foundUser.role === 'admin' && pass === 'admindgteam') ||
+            (foundUser.role === 'member' && pass === 'underground')) {
+          authenticateUser(user, foundUser.role);
+          return;
+        }
       }
       
       // Fallback untuk akun khusus
@@ -519,28 +509,32 @@ function loginUser() {
 function registerUser() {
   const user = document.getElementById('newUsername').value.trim();
   const pass = document.getElementById('newPassword').value.trim();
-  const email = `${user}@syndicate.com`;
+  const role = determineRoleFromPassword(pass);
 
-  if (!user || !pass) {
-    alert("Please fill all fields to join the family.");
-    return;
+  if (role === 'owner') {
+    firebase.database().ref('users').once('value', snapshot => {
+      const users = snapshot.val() || {};
+      const ownerExists = Object.values(users).some(u => u.role === 'owner');
+      if (ownerExists) {
+        alert("The Syndicate already has a Don. Only one owner allowed.");
+        return;
+      }
+      saveUser();
+    });
+  } else {
+    saveUser();
   }
 
-  firebase.auth().createUserWithEmailAndPassword(email, pass)
-    .then((userCredential) => {
-      const uid = userCredential.user.uid;
-      const role = determineRoleFromPassword(pass);
-
-      firebase.database().ref('users/' + uid).set({
-        username: user,
-        role: role
-      });
-
-      authenticateUser(user, role);
-    })
-    .catch((error) => {
-      alert("Registration error: " + error.message);
-    });
+  function saveUser() {
+    if (user && pass) {
+      const userData = { username: user, role: role };
+      firebase.database().ref('users/' + user.toLowerCase()).set(userData)
+        .then(() => authenticateUser(user, role))
+        .catch(err => alert("Register error: " + err.message));
+    } else {
+      alert("Please fill all fields to join the family.");
+    }
+  }
 }
 
       }
