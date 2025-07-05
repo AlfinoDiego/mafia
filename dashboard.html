@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Diego's Syndicate - Authentication</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --blood: #5a0000;
+      --gold: #8b6e3d;
+      --dark: #0a0a0a;
+      --darker: #050505;
+      --light: #c9c9c9;
+      --shadow: 0 5px 15px rgba(0,0,0,0.9);
+    }
+    * {margin:0;padding:0;box-sizing:border-box;}
+    body {
+      font-family:'Old Standard TT',serif;
+      color:var(--light);
+      background:var(--darker);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      overflow-x:hidden;
+    }
+    .mafia-bg {position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/fjt01h.jpg') no-repeat center/cover;opacity:0.8;filter:brightness(0.6) contrast(1.2);z-index:-1;}
+    header {position:fixed;top:0;left:0;right:0;background:rgba(5,5,5,0.95);padding:15px 30px;border-bottom:1px solid var(--blood);z-index:20;display:flex;justify-content:space-between;align-items:center;}
+    .logo {font-family:'Cinzel Decorative',cursive;font-size:1.5rem;color:var(--gold);letter-spacing:3px;}
+  </style>
+</head>
+<body>
+  <div class="mafia-bg"></div>
+  <header><div class="logo">DIEGO'S SYNDICATE</div></header>
+  <h2 style="color:var(--gold);font-family:'Cinzel Decorative',cursive;">Welcome to the Syndicate Dashboard</h2>
+  <script>
+    function checkAuth() {
+      try {
+        console.log("Checking authentication status...");
+        const loggedIn = localStorage.getItem('loggedIn');
+        if (loggedIn !== 'true') {
+          console.log("User is not logged in, redirecting to home.html");
+          window.location.href = "home.html";
+        }
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        window.location.href = "home.html";
+      }
+    }
+    checkAuth();
+  </script>
+</body>
+</html>
