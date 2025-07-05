@@ -437,14 +437,17 @@
 
     function checkAuth() {
       try {
-        const authContainer = document.getElementById('authContainer');
+        console.log("Checking authentication status...");
         const loggedIn = localStorage.getItem('loggedIn');
+        const authContainer = document.getElementById('authContainer');
         
-        if (loggedIn) {
-          // Redirect to home if already logged in
-          window.location.href = 'home.html';
+        if (loggedIn === 'true') {
+          console.log("User is logged in, redirecting to home.html");
+          // Use absolute path to ensure correct redirection
+          const baseUrl = window.location.href.replace(window.location.pathname, '');
+          window.location.href = baseUrl + '/home.html';
         } else {
-          // Show auth form if not logged in
+          console.log("User is not logged in, showing auth form");
           authContainer.style.display = 'block';
         }
       } catch (error) {
@@ -457,12 +460,17 @@
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value.trim();
 
+      if (!user || !pass) {
+        alert("Please enter both username and password");
+        return;
+      }
+
       // Check against registered users first
-      const users = JSON.parse(localStorage.getItem('users'));
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
       const foundUser = users.find(u => u.username.toLowerCase() === user.toLowerCase());
       
       if (foundUser) {
-        // User terdaftar, validasi password
+        // Validate password based on role
         if ((foundUser.role === 'owner' && pass === 'ownerpikoy078') ||
             (foundUser.role === 'admin' && pass === 'admindgteam') ||
             (foundUser.role === 'member' && pass === 'underground')) {
@@ -471,11 +479,11 @@
         }
       }
       
-      // Fallback untuk akun khusus
+      // Special account fallback
       if (user.toLowerCase() === 'secretmemberdg' && pass === 'underground') {
         authenticateUser(user, 'member');
       } else if (pass === 'ownerpikoy078') {
-        // Cek apakah owner sudah ada
+        // Check if owner already exists
         const ownerExists = users.some(u => u.role === 'owner');
         if (ownerExists && !foundUser) {
           alert("The Syndicate already has a Don. Only one owner allowed.");
@@ -492,11 +500,17 @@
     function registerUser() {
       const user = document.getElementById('newUsername').value.trim();
       const pass = document.getElementById('newPassword').value.trim();
+
+      if (!user || !pass) {
+        alert("Please fill all fields to join the family.");
+        return;
+      }
+
       const role = determineRoleFromPassword(pass);
 
-      // Validasi owner hanya boleh 1
+      // Validate only one owner
       if (role === 'owner') {
-        const users = JSON.parse(localStorage.getItem('users'));
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
         const ownerExists = users.some(u => u.role === 'owner');
         
         if (ownerExists) {
@@ -505,17 +519,18 @@
         }
       }
 
-      if (user && pass) {
-        // Save user data
-        const users = JSON.parse(localStorage.getItem('users'));
-        users.push({ username: user, role });
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        // Auto login
-        authenticateUser(user, role);
-      } else {
-        alert("Please fill all fields to join the family.");
+      // Save user data
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      if (users.some(u => u.username.toLowerCase() === user.toLowerCase())) {
+        alert("Username already exists. Choose another.");
+        return;
       }
+
+      users.push({ username: user, role });
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      // Auto login
+      authenticateUser(user, role);
     }
 
     function determineRoleFromPassword(pass) {
@@ -525,12 +540,20 @@
     }
 
     function authenticateUser(username, role) {
-      localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('username', username);
-      localStorage.setItem('userRole', role);
+      console.log("Authenticating user:", username, "with role:", role);
+      try {
+        localStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('username', username);
+        localStorage.setItem('userRole', role);
 
-      // Redirect to home page after successful login
-      window.location.href = 'home.html';
+        // Ensure home.html exists in the same directory
+        const baseUrl = window.location.href.replace(window.location.pathname, '');
+        console.log("Redirecting to:", baseUrl + '/home.html');
+        window.location.href = baseUrl + '/home.html';
+      } catch (error) {
+        console.error("Authentication error:", error);
+        alert("Failed to authenticate. Please try again.");
+      }
     }
   </script>
 </body>
