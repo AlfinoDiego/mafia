@@ -1,570 +1,126 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCncg5RxUjDKZiHNx84HJBuhsCpIl5Bc7Y",
+      authDomain: "syndicate-ccbfa.firebaseapp.com",
+      databaseURL: "https://syndicate-ccbfa-default-rtdb.firebaseio.com",
+      projectId: "syndicate-ccbfa",
+      storageBucket: "syndicate-ccbfa.appspot.com",
+      messagingSenderId: "511042679766",
+      appId: "1:511042679766:web:18df35a8b65c552b942a77"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diego's Syndicate - Authentication</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* === GLOBAL STYLES === */
     :root {
       --blood: #5a0000;
       --gold: #8b6e3d;
       --dark: #0a0a0a;
       --darker: #050505;
       --light: #c9c9c9;
-      --shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+      --shadow: 0 5px 15px rgba(0,0,0,0.9);
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * {margin:0;padding:0;box-sizing:border-box;}
     body {
-      font-family: 'Old Standard TT', serif;
-      color: var(--light);
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background: var(--darker);
-      position: relative;
-      touch-action: manipulation;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family:'Old Standard TT',serif;
+      color:var(--light);
+      background:var(--darker);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      overflow-x:hidden;
     }
-
-    /* === ENHANCED LOADING SCREEN === */
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--darker);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 1s ease-out;
-      overflow: hidden;
-    }
-
-    .loading-container {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .loading-logo {
-      font-family: 'Cinzel Decorative', cursive;
-      color: var(--gold);
-      font-size: 1.8rem;
-      letter-spacing: 3px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
-      position: relative;
-      z-index: 2;
-      text-align: center;
-    }
-
-    .loading-subtitle {
-      font-size: 0.8rem;
-      color: var(--light);
-      letter-spacing: 1px;
-      margin-bottom: 30px;
-      opacity: 0.7;
-      text-align: center;
-    }
-
-    .loading-bar-container {
-      width: 200px;
-      height: 3px;
-      background: rgba(90, 0, 0, 0.3);
-      margin-bottom: 30px;
-      overflow: hidden;
-      position: relative;
-      z-index: 2;
-    }
-
-    .loading-progress {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--blood), var(--gold));
-      transition: width 0.3s ease;
-    }
-
-    .loading-warning {
-      color: var(--blood);
-      font-size: 0.8rem;
-      text-align: center;
-      max-width: 250px;
-      font-style: italic;
-      letter-spacing: 0.5px;
-      animation: pulse 2s infinite;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Mafia-themed loading animations */
-    .loading-bullet {
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      background: var(--gold);
-      border-radius: 50%;
-      z-index: 1;
-      animation: bulletOrbit 6s linear infinite;
-      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
-    }
-
-    .loading-bullet:nth-child(2) {
-      width: 20px;
-      height: 20px;
-      animation-delay: -2s;
-      animation-duration: 8s;
-    }
-
-    .loading-bullet:nth-child(3) {
-      width: 10px;
-      height: 10px;
-      animation-delay: -4s;
-      animation-duration: 10s;
-    }
-
-    .loading-money {
-      position: absolute;
-      color: var(--gold);
-      font-size: 1rem;
-      z-index: 1;
-      animation: moneyFloat 5s linear infinite;
-    }
-
-    .loading-money:nth-child(4) {
-      top: 20%;
-      left: 15%;
-      animation-delay: 0s;
-    }
-
-    .loading-money:nth-child(5) {
-      top: 70%;
-      left: 80%;
-      animation-delay: -1.5s;
-    }
-
-    .loading-money:nth-child(6) {
-      top: 85%;
-      left: 30%;
-      animation-delay: -3s;
-    }
-
-    @keyframes bulletOrbit {
-      0% {
-        transform: rotate(0deg) translateX(100px) rotate(0deg);
-        opacity: 0.8;
-      }
-      50% {
-        opacity: 0.3;
-      }
-      100% {
-        transform: rotate(360deg) translateX(100px) rotate(-360deg);
-        opacity: 0.8;
-      }
-    }
-
-    @keyframes moneyFloat {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.7;
-      }
-      90% {
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(-100px) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
-      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
-      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
-    }
-
-    /* === MAFIA BACKGROUND === */
-    .mafia-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -3;
-      background: url('https://files.catbox.moe/fjt01h.jpg') no-repeat center center/cover;
-      opacity: 0.8;
-      filter: brightness(0.6) contrast(1.2);
-    }
-
-    /* === BLOOD SPLASH EFFECT === */
-    .blood-splash {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(139,0,0,0.8) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10;
-      transform: scale(0);
-      opacity: 0;
-      animation: bloodSplash 1.5s forwards;
-    }
-
-    @keyframes bloodSplash {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.2); opacity: 0.8; }
-      100% { transform: scale(1); opacity: 0; }
-    }
-
-    /* === HEADER STYLE === */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(5, 5, 5, 0.95);
-      padding: 15px 30px;
-      border-bottom: 1px solid var(--blood);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      box-shadow: var(--shadow);
-    }
-
-    .logo {
-      font-family: 'Cinzel Decorative', cursive;
-      font-size: 1.5rem;
-      color: var(--gold);
-      letter-spacing: 3px;
-      position: relative;
-      text-shadow: 0 0 5px rgba(139, 110, 61, 0.3);
-      margin-left: 15px;
-    }
-
-    /* === AUTH MODAL STYLES === */
-    .auth-input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      background: var(--dark);
-      color: var(--light);
-      border: 1px solid var(--blood);
-    }
-
-    .auth-button {
-      width: 100%;
-      padding: 12px;
-      background: var(--blood);
-      color: var(--light);
-      border: none;
-      cursor: pointer;
-      font-family: 'Old Standard TT', serif;
-    }
-
-    .auth-button:hover {
-      background: var(--gold);
-      color: var(--dark);
-    }
-
-    .auth-toggle {
-      display: flex;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--blood);
-    }
-
-    .auth-tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      background: var(--dark);
-      color: var(--light);
-      border: none;
-      font-family: 'Old Standard TT', serif;
-    }
-
-    .auth-tab.active {
-      background: var(--blood);
-      color: var(--light);
-    }
-
-    /* Blood splash effect on click */
-    .blood-splash {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(139,0,0,0.8) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10;
-      transform: scale(0);
-      opacity: 0;
-      animation: bloodSplash 1.5s forwards;
-    }
-
-    @keyframes bloodSplash {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.2); opacity: 0.8; }
-      100% { transform: scale(1); opacity: 0; }
-    }
+    .mafia-bg {position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/fjt01h.jpg') no-repeat center/cover;opacity:0.8;filter:brightness(0.6) contrast(1.2);z-index:-1;}
+    header {position:fixed;top:0;left:0;right:0;background:rgba(5,5,5,0.95);padding:15px 30px;border-bottom:1px solid var(--blood);z-index:20;display:flex;justify-content:space-between;align-items:center;}
+    .logo {font-family:'Cinzel Decorative',cursive;font-size:1.5rem;color:var(--gold);letter-spacing:3px;}
+    .auth-input {width:100%;padding:10px;margin-bottom:15px;background:var(--dark);color:var(--light);border:1px solid var(--blood);}
+    .auth-button {width:100%;padding:12px;background:var(--blood);color:var(--light);border:none;cursor:pointer;font-family:'Old Standard TT',serif;}
+    .auth-button:hover {background:var(--gold);color:var(--dark);}
+    .auth-tab {flex:1;padding:10px;text-align:center;cursor:pointer;background:var(--dark);color:var(--light);}
+    .auth-tab.active {background:var(--blood);}
+    .auth-toggle {display:flex;margin-bottom:20px;border-bottom:1px solid var(--blood);}
+    .blood-splash {position:absolute;width:200px;height:200px;background:radial-gradient(circle,rgba(139,0,0,0.8) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:10;transform:scale(0);opacity:0;animation:bloodSplash 1.5s forwards;}
+    @keyframes bloodSplash {0%{transform:scale(0);opacity:0;}50%{transform:scale(1.2);opacity:0.8;}100%{transform:scale(1);opacity:0;}}
   </style>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCncg5RxUjDKZiHNx84HJBuhsCpIl5Bc7Y",
-    authDomain: "syndicate-ccbfa.firebaseapp.com",
-    projectId: "syndicate-ccbfa",
-    storageBucket: "syndicate-ccbfa.firebasestorage.app",
-    messagingSenderId: "511042679766",
-    appId: "1:511042679766:web:18df35a8b65c552b942a77"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
-
 </head>
 <body>
-  <!-- ENHANCED LOADING SCREEN -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-container">
-      <div class="loading-bullet"></div>
-      <div class="loading-bullet"></div>
-      <div class="loading-bullet"></div>
-      
-      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
-      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
-      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
-      
-      <div class="loading-logo">DIEGO'S SYNDICATE</div>
-      <div class="loading-subtitle">Secret Business</div>
-      <div class="loading-bar-container">
-        <div class="loading-progress" id="loadingProgress"></div>
-      </div>
-      <div class="loading-warning">
-        "Discretion is our business. Speak of this and face consequences."
-      </div>
-    </div>
-  </div>
-
-  <!-- DARK BACKGROUND -->
   <div class="mafia-bg"></div>
-
-  <!-- HEADER -->
-  <header>
-    <div class="logo">DIEGO'S SYNDICATE</div>
-  </header>
-
-  <!-- AUTH CONTAINER -->
-  <div style="background:#0a0a0a; padding:30px; border:2px solid var(--blood); width:320px; box-shadow: 0 0 15px rgba(139,0,0,0.6); text-align:center; z-index:10;">
-    <h2 style="color:var(--gold); font-family:'Cinzel Decorative',cursive; margin-bottom:10px;">Underground Access</h2>
-    <p style="color:var(--light); font-size:0.9rem; margin-bottom:20px;">
-      Enter with respect. Only family knows the codes.
-    </p>
-    
+  <header><div class="logo">DIEGO'S SYNDICATE</div></header>
+  <div style="background:#0a0a0a; padding:30px; border:2px solid var(--blood); width:320px; text-align:center; z-index:10;">
+    <h2 style="color:var(--gold);font-family:'Cinzel Decorative',cursive;">Underground Access</h2>
     <div class="auth-toggle">
       <button class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
       <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
     </div>
-    
     <div id="signinForm">
-      <input type="text" id="username" placeholder="Username" class="auth-input" />
-      <input type="password" id="password" placeholder="Password" class="auth-input" />
+      <input type="email" id="username" placeholder="Email" class="auth-input">
+      <input type="password" id="password" placeholder="Password" class="auth-input">
       <button onclick="loginUser()" class="auth-button">Enter the Syndicate</button>
     </div>
-    
     <div id="signupForm" style="display:none;">
-      <input type="text" id="newUsername" placeholder="Username" class="auth-input" />
-      <input type="password" id="newPassword" placeholder="Password" class="auth-input" />
+      <input type="email" id="newUsername" placeholder="Email" class="auth-input">
+      <input type="password" id="newPassword" placeholder="Password" class="auth-input">
       <button onclick="registerUser()" class="auth-button">Join the Family</button>
     </div>
-    
-    <div style="margin-top:15px; font-size:0.8rem; color:#999;">
+    <div style="margin-top:15px;font-size:0.8rem;color:#999;">
       <p><em>username dan password ada di saluran</em></p>
-      <a href="https://whatsapp.com/channel/0029Vb6Pl0VBA1errm9iov3h" target="_blank"
-         style="display:inline-block; margin-top:10px; background:#8b6e3d; color:#000; padding:8px 12px; text-decoration:none; font-weight:bold; border-radius:4px;">
-        🔗 Go to The Channel
-      </a>
+      <a href="https://whatsapp.com/channel/0029Vb6Pl0VBA1errm9iov3h" target="_blank" style="display:inline-block;margin-top:10px;background:#8b6e3d;color:#000;padding:8px 12px;text-decoration:none;font-weight:bold;border-radius:4px;">🔗 Go to The Channel</a>
     </div>
   </div>
-
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Enhanced loading screen with mafia animations
-      const loadingScreen = document.getElementById('loadingScreen');
-      const loadingProgress = document.getElementById('loadingProgress');
-      
-      let progress = 0;
-      const loadingInterval = setInterval(() => {
-        progress += Math.random() * 15;
-        loadingProgress.style.width = Math.min(progress, 100) + '%';
-        
-        if (progress >= 100) {
-          clearInterval(loadingInterval);
-          loadingScreen.style.opacity = '0';
-          setTimeout(() => {
-            loadingScreen.style.display = 'none';
-          }, 1000);
-        }
-      }, 200);
-
-      // Blood splash effect on click
-      document.addEventListener('click', function(e) {
-        // Create blood splash
-        const splash = document.createElement('div');
-        splash.className = 'blood-splash';
-        splash.style.left = (e.clientX - 100) + 'px';
-        splash.style.top = (e.clientY - 100) + 'px';
+    document.addEventListener('DOMContentLoaded', function(){
+      document.addEventListener('click', function(e){
+        const splash=document.createElement('div');
+        splash.className='blood-splash';
+        splash.style.left=(e.clientX-100)+'px';
+        splash.style.top=(e.clientY-100)+'px';
         document.body.appendChild(splash);
-        
-        // Remove after animation
-        setTimeout(() => {
-          document.body.removeChild(splash);
-        }, 1500);
+        setTimeout(()=>{document.body.removeChild(splash);},1500);
       });
-
-      // Initialize users in localStorage if not exists
-      if (!localStorage.getItem('users')) {
-        localStorage.setItem('users', JSON.stringify([]));
-      }
     });
-
-    // AUTH FUNCTIONS
-    function switchAuthTab(tab) {
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('signinForm').style.display = 'none';
-      document.getElementById('signupForm').style.display = 'none';
-      
-      if (tab === 'signin') {
+    function switchAuthTab(tab){
+      document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+      if(tab==='signin'){
         document.querySelector('.auth-tab:first-child').classList.add('active');
-        document.getElementById('signinForm').style.display = 'block';
-      } else {
+        document.getElementById('signinForm').style.display='block';
+        document.getElementById('signupForm').style.display='none';
+      }else{
         document.querySelector('.auth-tab:last-child').classList.add('active');
-        document.getElementById('signupForm').style.display = 'block';
+        document.getElementById('signinForm').style.display='none';
+        document.getElementById('signupForm').style.display='block';
       }
     }
-
-    function loginUser() {
-      const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value.trim();
-
-      // Check against registered users first
-      const users = JSON.parse(localStorage.getItem('users'));
-      const foundUser = users.find(u => u.username.toLowerCase() === user.toLowerCase());
-      
-      if (foundUser) {
-        // User terdaftar, validasi password
-        if ((foundUser.role === 'owner' && pass === 'ownerpikoy078') ||
-            (foundUser.role === 'admin' && pass === 'admindgteam') ||
-            (foundUser.role === 'member' && pass === 'underground')) {
-          authenticateUser(user, foundUser.role);
-          return;
-        }
-      }
-      
-      // Fallback untuk akun khusus
-      if (user.toLowerCase() === 'secretmemberdg' && pass === 'underground') {
-        authenticateUser(user, 'member');
-      } else if (pass === 'ownerpikoy078') {
-        // Cek apakah owner sudah ada
-        const ownerExists = users.some(u => u.role === 'owner');
-        if (ownerExists && !foundUser) {
-          alert("The Syndicate already has a Don. Only one owner allowed.");
-          return;
-        }
-        authenticateUser(user, 'owner');
-      } else if (pass === 'admindgteam') {
-        authenticateUser(user, 'admin');
-      } else {
-        alert("Invalid credentials. You're not family.");
-      }
+    function loginUser(){
+      const email=document.getElementById('username').value.trim();
+      const password=document.getElementById('password').value.trim();
+      auth.signInWithEmailAndPassword(email,password).then(async(cred)=>{
+        const uid=cred.user.uid;
+        const userDoc=await db.collection('users').doc(uid).get();
+        if(!userDoc.exists){alert('Role not found. Contact admin.');return;}
+        window.location.href='index.html';
+      }).catch(err=>alert(err.message));
     }
-
-    
-function registerUser() {
-  const user = document.getElementById('newUsername').value.trim();
-  const pass = document.getElementById('newPassword').value.trim();
-  const role = determineRoleFromPassword(pass);
-
-  if (role === 'owner') {
-    firebase.database().ref('users').once('value', snapshot => {
-      const users = snapshot.val() || {};
-      const ownerExists = Object.values(users).some(u => u.role === 'owner');
-      if (ownerExists) {
-        alert("The Syndicate already has a Don. Only one owner allowed.");
-        return;
-      }
-      saveUser();
-    });
-  } else {
-    saveUser();
-  }
-
-  function saveUser() {
-    if (user && pass) {
-      const userData = { username: user, role: role };
-      firebase.database().ref('users/' + user.toLowerCase()).set(userData)
-        .then(() => authenticateUser(user, role))
-        .catch(err => alert("Register error: " + err.message));
-    } else {
-      alert("Please fill all fields to join the family.");
-    }
-  }
-}
-
-      }
-
-      if (user && pass) {
-        // Save user data
-        const users = JSON.parse(localStorage.getItem('users'));
-        users.push({ username: user, role });
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        // Auto login
-        authenticateUser(user, role);
-      } else {
-        alert("Please fill all fields to join the family.");
-      }
-    }
-
-    function determineRoleFromPassword(pass) {
-      if (pass === 'ownerpikoy078') return 'owner';
-      if (pass === 'admindgteam') return 'admin';
-      return 'member';
-    }
-
-    function authenticateUser(username, role) {
-      localStorage.setItem('loggedIn', 'true');
-      localStorage.setItem('username', username);
-      localStorage.setItem('userRole', role);
-
-      // Redirect to home page after successful login
-      window.location.href = 'index.html';
+    function registerUser(){
+      const email=document.getElementById('newUsername').value.trim();
+      const password=document.getElementById('newPassword').value.trim();
+      const role="member";
+      auth.createUserWithEmailAndPassword(email,password).then(cred=>{
+        return db.collection('users').doc(cred.user.uid).set({email,role});
+      }).then(()=>{window.location.href='index.html';}).catch(err=>alert(err.message));
     }
   </script>
 </body>
