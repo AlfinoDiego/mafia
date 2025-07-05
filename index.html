@@ -18,6 +18,23 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    <script>
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log("Persistence set to LOCAL");
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+</script>
+    <script>
+  auth.onAuthStateChanged(user => {
+    if(user){
+      // kalau sudah login, langsung lompat ke dashboard
+      window.location.href = "dashboard.html";
+    }
+  });
+</script>
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
