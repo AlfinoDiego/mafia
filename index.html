@@ -111,7 +111,7 @@
         const uid=cred.user.uid;
         const userDoc=await db.collection('users').doc(uid).get();
         if(!userDoc.exists){alert('Role not found. Contact admin.');return;}
-        window.location.href='index.html';
+        window.location.href='dashboard.html';
       }).catch(err=>alert(err.message));
     }
     function registerUser(){
