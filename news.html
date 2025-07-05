@@ -612,7 +612,20 @@
         bg.style.transform = `scale(${Math.min(scale, 1.02)})`;
       });
 
-      function renderNews() {
+      
+function enableAddBtn() {
+  addBtn.addEventListener('click', function () {
+    if (userRole === 'admin' || userRole === 'owner') {
+      newsForm.style.display = newsForm.style.display === 'block' ? 'none' : 'block';
+      if (newsForm.style.display === 'block') {
+        newsTitle.focus();
+      }
+    }
+  });
+}
+
+
+function renderNews() {
         newsContainer.innerHTML = '';
         if (news.length === 0) {
           newsContainer.innerHTML = `
