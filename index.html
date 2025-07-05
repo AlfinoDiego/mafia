@@ -34,175 +34,6 @@
       touch-action: manipulation;
     }
 
-    /* === ENHANCED LOADING SCREEN === */
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--darker);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 1s ease-out;
-      overflow: hidden;
-    }
-
-    .loading-container {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .loading-logo {
-      font-family: 'Cinzel Decorative', cursive;
-      color: var(--gold);
-      font-size: 1.8rem;
-      letter-spacing: 3px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
-      position: relative;
-      z-index: 2;
-      text-align: center;
-    }
-
-    .loading-subtitle {
-      font-size: 0.8rem;
-      color: var(--light);
-      letter-spacing: 1px;
-      margin-bottom: 30px;
-      opacity: 0.7;
-      text-align: center;
-    }
-
-    .loading-bar-container {
-      width: 200px;
-      height: 3px;
-      background: rgba(90, 0, 0, 0.3);
-      margin-bottom: 30px;
-      overflow: hidden;
-      position: relative;
-      z-index: 2;
-    }
-
-    .loading-progress {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--blood), var(--gold));
-      transition: width 0.3s ease;
-    }
-
-    .loading-warning {
-      color: var(--blood);
-      font-size: 0.8rem;
-      text-align: center;
-      max-width: 250px;
-      font-style: italic;
-      letter-spacing: 0.5px;
-      animation: pulse 2s infinite;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Mafia-themed loading animations */
-    .loading-bullet {
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      background: var(--gold);
-      border-radius: 50%;
-      z-index: 1;
-      animation: bulletOrbit 6s linear infinite;
-      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
-    }
-
-    .loading-bullet:nth-child(2) {
-      width: 20px;
-      height: 20px;
-      animation-delay: -2s;
-      animation-duration: 8s;
-    }
-
-    .loading-bullet:nth-child(3) {
-      width: 10px;
-      height: 10px;
-      animation-delay: -4s;
-      animation-duration: 10s;
-    }
-
-    .loading-money {
-      position: absolute;
-      color: var(--gold);
-      font-size: 1rem;
-      z-index: 1;
-      animation: moneyFloat 5s linear infinite;
-    }
-
-    .loading-money:nth-child(4) {
-      top: 20%;
-      left: 15%;
-      animation-delay: 0s;
-    }
-
-    .loading-money:nth-child(5) {
-      top: 70%;
-      left: 80%;
-      animation-delay: -1.5s;
-    }
-
-    .loading-money:nth-child(6) {
-      top: 85%;
-      left: 30%;
-      animation-delay: -3s;
-    }
-
-    @keyframes bulletOrbit {
-      0% {
-        transform: rotate(0deg) translateX(100px) rotate(0deg);
-        opacity: 0.8;
-      }
-      50% {
-        opacity: 0.3;
-      }
-      100% {
-        transform: rotate(360deg) translateX(100px) rotate(-360deg);
-        opacity: 0.8;
-      }
-    }
-
-    @keyframes moneyFloat {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.7;
-      }
-      90% {
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(-100px) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
-      50% { opacity: 1; text-shadow: 0 0 10px rgba(139,0,0,0.7); }
-      100% { opacity: 0.5; text-shadow: 0 0 5px rgba(139,0,0,0.3); }
-    }
-
     /* === MAFIA BACKGROUND === */
     .mafia-bg {
       position: fixed;
@@ -417,6 +248,68 @@
       visibility: visible;
     }
 
+    /* === EDIT CONTROLS === */
+    .edit-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      display: none;
+    }
+
+    .edit-btn {
+      background: var(--blood);
+      color: var(--light);
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-family: 'Old Standard TT', serif;
+    }
+
+    .edit-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .edit-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .edit-modal-content {
+      background: var(--darker);
+      padding: 20px;
+      width: 80%;
+      max-width: 600px;
+      border: 1px solid var(--blood);
+    }
+
+    .edit-modal-content textarea {
+      width: 100%;
+      height: 300px;
+      background: var(--dark);
+      color: var(--light);
+      border: 1px solid var(--blood);
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .edit-modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
     /* === RESPONSIVE DESIGN === */
     @media (max-width: 992px) {
       .content {
@@ -445,31 +338,33 @@
         font-size: 1.8rem;
       }
     }
+
+    /* === USER INFO STYLES === */
+    .user-info {
+      padding: 15px 25px;
+      margin: 20px 0;
+      border-top: 1px solid var(--blood);
+      border-bottom: 1px solid var(--blood);
+      background: rgba(90, 0, 0, 0.1);
+    }
+
+    .user-name {
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
+    }
+
+    .user-role {
+      color: var(--light);
+      font-size: 0.8rem;
+      font-style: italic;
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
-  <!-- ENHANCED LOADING SCREEN -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-container">
-      <div class="loading-bullet"></div>
-      <div class="loading-bullet"></div>
-      <div class="loading-bullet"></div>
-      
-      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
-      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
-      <div class="loading-money"><i class="fas fa-money-bill-wave"></i></div>
-      
-      <div class="loading-logo">DIEGO'S SYNDICATE</div>
-      <div class="loading-subtitle">Secret Business</div>
-      <div class="loading-bar-container">
-        <div class="loading-progress" id="loadingProgress"></div>
-      </div>
-      <div class="loading-warning">
-        "Discretion is our business. Speak of this and face consequences."
-      </div>
-    </div>
-  </div>
-
   <!-- DARK BACKGROUND -->
   <div class="mafia-bg"></div>
 
@@ -490,7 +385,13 @@
       <p class="motto">"Plata o Plomo"</p>
     </div>
     
-    <ul>
+    <!-- User Info Section -->
+    <div class="user-info" id="userInfo">
+      <div class="user-name" id="displayName"></div>
+      <div class="user-role" id="displayRole"></div>
+    </div>
+    
+    <ul id="menuList">
       <li><a href="aboutme.html"><i class="fas fa-user-secret"></i> About The Don</a></li>
       <li><a href="cali.html"><i class="fas fa-user-tie"></i> Cali – Right Hand</a></li>
       <li><a href="testimoni.html"><i class="fas fa-scroll"></i> Client Testimonials</a></li>
@@ -499,7 +400,7 @@
       <li><a href="secret.html"><i class="fas fa-briefcase"></i> Underground Operations</a></li>
       <li><a href="news.html"><i class="fas fa-newspaper"></i> Blog & News</a></li>
       <li><a href="requests.html"><i class="fas fa-question"></i> Requests/Saran</a></li>
-      <li><a href="register.html" style="color: var(--gold);"><i class="fas fa-user-secret"></i> Join The Family</a></li>
+      <li id="logoutMenu" style="margin-top:20px; text-align:center;"><a href="index.html" onclick="vanish()"><i class="fas fa-user-ninja"></i> Vanish from the Streets</a></li>
     </ul>
   </aside>
 
@@ -508,32 +409,38 @@
 
   <!-- MAIN CONTENT -->
   <main class="content">
-    <h1>PERTEMUAN RAHASIA</h1>
+    <h1 id="mainTitle">PERTEMUAN RAHASIA</h1>
     
-    <p>Di dunia bawah tanah ini, setiap pertemuan adalah rahasia yang dijaga dengan nyawa. Diego's Syndicate mengoperasikan bisnis dengan kode keheningan yang tak tergoyahkan. Kepercayaan dibangun dengan darah, dan pengkhianatan dihukum dengan cara yang tak terkatakan.</p>
+    <p id="contentParagraph1">Di dunia bawah tanah ini, setiap pertemuan adalah rahasia yang dijaga dengan nyawa. Diego's Syndicate mengoperasikan bisnis dengan kode keheningan yang tak tergoyahkan. Kepercayaan dibangun dengan darah, dan pengkhianatan dihukum dengan cara yang tak terkatakan.</p>
     
-    <p>Layanan kami eksklusif untuk mereka yang memahami aturan tak tertulis. Ketika Anda membutuhkan solusi permanen untuk masalah sementara, kami adalah jawaban yang tak terucapkan.</p>
+    <p id="contentParagraph2">Layanan kami eksklusif untuk mereka yang memahami aturan tak tertulis. Ketika Anda membutuhkan solusi permanen untuk masalah sementara, kami adalah jawaban yang tak terucapkan.</p>
   </main>
+
+  <!-- EDIT CONTROLS (Only visible for admin/owner) -->
+  <div class="edit-controls" id="editControls">
+    <button class="edit-btn" onclick="showEditOptions()"><i class="fas fa-cog"></i> Edit Settings</button>
+  </div>
+
+  <!-- EDIT OPTIONS MODAL -->
+  <div class="edit-modal" id="editOptionsModal">
+    <div class="edit-modal-content">
+      <h3 style="color: var(--gold);">What do you want to edit?</h3>
+      <div id="editOptionsList" class="edit-options">
+        <!-- Options will be added here dynamically based on role -->
+      </div>
+      <div class="edit-modal-buttons">
+        <button class="edit-btn" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Enhanced loading screen with mafia animations
-      const loadingScreen = document.getElementById('loadingScreen');
-      const loadingProgress = document.getElementById('loadingProgress');
-      
-      let progress = 0;
-      const loadingInterval = setInterval(() => {
-        progress += Math.random() * 15;
-        loadingProgress.style.width = Math.min(progress, 100) + '%';
-        
-        if (progress >= 100) {
-          clearInterval(loadingInterval);
-          loadingScreen.style.opacity = '0';
-          setTimeout(() => {
-            loadingScreen.style.display = 'none';
-          }, 1000);
-        }
-      }, 200);
+      // Check authentication
+      if (!localStorage.getItem('loggedIn')) {
+        window.location.href = 'index.html';
+        return;
+      }
 
       const menuToggle = document.querySelector('.menu-toggle');
       const sidebar = document.querySelector('.sidebar');
@@ -567,7 +474,77 @@
           document.body.removeChild(splash);
         }, 1500);
       });
+
+      // Update user display
+      updateUserDisplay();
+
+      // Show edit controls based on role
+      const role = localStorage.getItem('userRole');
+      if (role === 'admin' || role === 'owner') {
+        document.getElementById('editControls').style.display = 'block';
+      }
     });
+
+    function updateUserDisplay() {
+      const username = localStorage.getItem('username');
+      const role = localStorage.getItem('userRole');
+      
+      // Set display name based on role
+      let displayName = username.toUpperCase();
+      let roleName = '';
+      
+      if (role === 'owner') {
+        displayName = 'THE DON - GIA';
+        roleName = 'IL CAPO DI TUTTI CAPI (The Boss of All Bosses)';
+      } else if (role === 'admin') {
+        displayName = username.toUpperCase();
+        roleName = 'CAPOREGIME (Underboss)';
+      } else {
+        displayName = username.toUpperCase();
+        roleName = 'SOLDIER (Made Man)';
+      }
+      
+      document.getElementById('displayName').textContent = displayName;
+      document.getElementById('displayRole').textContent = roleName;
+    }
+
+    function vanish() {
+      if (confirm("Are you sure you want to vanish? The Syndicate will remember...")) {
+        localStorage.removeItem('loggedIn');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+      }
+    }
+
+    function showEditOptions() {
+      const role = localStorage.getItem('userRole');
+      const optionsList = document.getElementById('editOptionsList');
+      optionsList.innerHTML = '';
+
+      if (role === 'admin') {
+        optionsList.innerHTML = `
+          <button class="edit-btn" onclick="location.href='testimoni.html'"><i class="fas fa-scroll"></i> Edit Testimonials</button>
+          <button class="edit-btn" onclick="location.href='requests.html'"><i class="fas fa-question"></i> Manage Q&A</button>
+        `;
+      } else if (role === 'owner') {
+        optionsList.innerHTML = `
+          <button class="edit-btn" onclick="location.href='aboutme.html'"><i class="fas fa-user-secret"></i> Edit About The Don</button>
+          <button class="edit-btn" onclick="location.href='cali.html'"><i class="fas fa-user-tie"></i> Edit Cali</button>
+          <button class="edit-btn" onclick="location.href='testimoni.html'"><i class="fas fa-scroll"></i> Edit Testimonials</button>
+          <button class="edit-btn" onclick="location.href='service.html'"><i class="fas fa-gun"></i> Edit Services</button>
+          <button class="edit-btn" onclick="location.href='payment.html'"><i class="fas fa-money-bill-wave"></i> Edit Payment Methods</button>
+          <button class="edit-btn" onclick="location.href='secret.html'"><i class="fas fa-briefcase"></i> Edit Underground Operations</button>
+          <button class="edit-btn" onclick="location.href='news.html'"><i class="fas fa-newspaper"></i> Edit News</button>
+          <button class="edit-btn" onclick="location.href='requests.html'"><i class="fas fa-question"></i> View Requests</button>
+        `;
+      }
+
+      document.getElementById('editOptionsModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editOptionsModal').style.display = 'none';
+    }
   </script>
 </body>
 </html>
