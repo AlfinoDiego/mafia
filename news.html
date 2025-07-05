@@ -441,6 +441,40 @@
     <div class="logo">BLOOD IN, BLOOD OUT</div>
   </header>
 
+<style>
+  .role-debug {
+    text-align: center;
+    margin: 10px auto;
+    padding: 10px;
+    background: #1a1a1a;
+    color: #d4af37;
+    font-size: 14px;
+    border-top: 1px solid #5a0000;
+    border-bottom: 1px solid #5a0000;
+  }
+  .role-debug button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background: #3a0000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+  .role-debug button:hover {
+    background: #5a0000;
+  }
+</style>
+
+<div class="role-debug">
+  Kamu login sebagai: <strong id="debugRole">unknown</strong><br>
+  <button onclick="switchRole('owner')">Owner</button>
+  <button onclick="switchRole('admin')">Admin</button>
+  <button onclick="switchRole('member')">Member</button>
+</div>
+
+
   <main class="content">
     <!-- User Info Display -->
     <div class="user-info" id="userInfo" style="display: none;">
@@ -755,6 +789,19 @@ function renderNews() {
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("debugRole").textContent = localStorage.getItem('userRole') || 'none';
+  });
+
+  function switchRole(role) {
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('loggedIn', 'true');
+    location.reload();
+  }
 </script>
 
 </body>
