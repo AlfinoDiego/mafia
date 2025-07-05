@@ -332,6 +332,23 @@
       100% { transform: scale(1); opacity: 0; }
     }
   </style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCncg5RxUjDKZiHNx84HJBuhsCpIl5Bc7Y",
+    authDomain: "syndicate-ccbfa.firebaseapp.com",
+    projectId: "syndicate-ccbfa",
+    storageBucket: "syndicate-ccbfa.firebasestorage.app",
+    messagingSenderId: "511042679766",
+    appId: "1:511042679766:web:18df35a8b65c552b942a77"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
 </head>
 <body>
   <!-- ENHANCED LOADING SCREEN -->
@@ -453,22 +470,31 @@
       }
     }
 
-    function loginUser() {
-      const user = document.getElementById('username').value.trim();
-      const pass = document.getElementById('password').value.trim();
+    
+function loginUser() {
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value.trim();
+  const email = `${user}@syndicate.com`;
 
-      // Check against registered users first
-      const users = JSON.parse(localStorage.getItem('users'));
-      const foundUser = users.find(u => u.username.toLowerCase() === user.toLowerCase());
-      
-      if (foundUser) {
-        // User terdaftar, validasi password
-        if ((foundUser.role === 'owner' && pass === 'ownerpikoy078') ||
-            (foundUser.role === 'admin' && pass === 'admindgteam') ||
-            (foundUser.role === 'member' && pass === 'underground')) {
-          authenticateUser(user, foundUser.role);
-          return;
-        }
+  firebase.auth().signInWithEmailAndPassword(email, pass)
+    .then((userCredential) => {
+      const uid = userCredential.user.uid;
+
+      firebase.database().ref('users/' + uid).once('value')
+        .then(snapshot => {
+          const data = snapshot.val();
+          if (data) {
+            authenticateUser(data.username, data.role);
+          } else {
+            alert("User not found.");
+          }
+        });
+    })
+    .catch((error) => {
+      alert("Login error: " + error.message);
+    });
+}
+
       }
       
       // Fallback untuk akun khusus
@@ -489,20 +515,34 @@
       }
     }
 
-    function registerUser() {
-      const user = document.getElementById('newUsername').value.trim();
-      const pass = document.getElementById('newPassword').value.trim();
+    
+function registerUser() {
+  const user = document.getElementById('newUsername').value.trim();
+  const pass = document.getElementById('newPassword').value.trim();
+  const email = `${user}@syndicate.com`;
+
+  if (!user || !pass) {
+    alert("Please fill all fields to join the family.");
+    return;
+  }
+
+  firebase.auth().createUserWithEmailAndPassword(email, pass)
+    .then((userCredential) => {
+      const uid = userCredential.user.uid;
       const role = determineRoleFromPassword(pass);
 
-      // Validasi owner hanya boleh 1
-      if (role === 'owner') {
-        const users = JSON.parse(localStorage.getItem('users'));
-        const ownerExists = users.some(u => u.role === 'owner');
-        
-        if (ownerExists) {
-          alert("The Syndicate already has a Don. Only one owner allowed.");
-          return;
-        }
+      firebase.database().ref('users/' + uid).set({
+        username: user,
+        role: role
+      });
+
+      authenticateUser(user, role);
+    })
+    .catch((error) => {
+      alert("Registration error: " + error.message);
+    });
+}
+
       }
 
       if (user && pass) {
