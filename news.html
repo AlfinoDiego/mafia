@@ -441,40 +441,6 @@
     <div class="logo">BLOOD IN, BLOOD OUT</div>
   </header>
 
-<style>
-  .role-debug {
-    text-align: center;
-    margin: 10px auto;
-    padding: 10px;
-    background: #1a1a1a;
-    color: #d4af37;
-    font-size: 14px;
-    border-top: 1px solid #5a0000;
-    border-bottom: 1px solid #5a0000;
-  }
-  .role-debug button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background: #3a0000;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    border-radius: 4px;
-  }
-  .role-debug button:hover {
-    background: #5a0000;
-  }
-</style>
-
-<div class="role-debug">
-  Kamu login sebagai: <strong id="debugRole">unknown</strong><br>
-  <button onclick="switchRole('owner')">Owner</button>
-  <button onclick="switchRole('admin')">Admin</button>
-  <button onclick="switchRole('member')">Member</button>
-</div>
-
-
   <main class="content">
     <!-- User Info Display -->
     <div class="user-info" id="userInfo" style="display: none;">
@@ -512,297 +478,323 @@
     </div>
   </main>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Get user data from localStorage (connected to fixindexlast.html)
-      const currentUserId = localStorage.getItem('username') || 'guest_' + Math.floor(Math.random() * 1000);
-      const userRole = localStorage.getItem('userRole') || 'member';
-      
-      // Display user info - REMOVED DIDGOW REFERENCE
-      const displayName = document.getElementById('displayName');
-      const displayRole = document.getElementById('displayRole');
-      const userInfo = document.getElementById('userInfo');
-      const addBtn = document.getElementById('addBtn');
-      
-      if (localStorage.getItem('loggedIn')) {
-        userInfo.style.display = 'block';
-        if (userRole === 'owner') {
-          displayName.textContent = 'THE DON';
-          displayRole.textContent = 'IL CAPO DI TUTTI CAPI';
-          addBtn.style.display = 'flex';
-        } else if (userRole === 'admin') {
-          displayName.textContent = 'UNDERBOSS';
-          displayRole.textContent = 'CAPOREGIME';
-          addBtn.style.display = 'flex';
-        } else {
-          displayName.textContent = 'SOLDIER';
-          displayRole.textContent = 'ASSOCIATE';
-        }
+<script>
+auth.onAuthStateChanged(user => {
+  if(user){
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      const data = doc.data();
+      const userRole = data.role;
+
+      // Tampilkan info user
+      const displayName = document.getElementById("displayName");
+      const displayRole = document.getElementById("displayRole");
+      const userInfo = document.getElementById("userInfo");
+      const addBtn = document.getElementById("addBtn");
+      const newsContainer = document.getElementById("newsContainer");
+      const newsForm = document.getElementById("newsForm");
+      const newsTitle = document.getElementById("newsTitle");
+      const newsContent = document.getElementById("newsContent");
+      const submitBtn = document.getElementById("submitBtn");
+
+      userInfo.style.display = "block";
+      displayName.textContent = user.email;
+      displayRole.textContent = userRole.toUpperCase();
+
+      if(userRole==="owner"){
+        displayName.textContent = "THE DON";
+        displayRole.textContent = "IL CAPO DI TUTTI CAPI";
+        addBtn.style.display="flex";
+      } else if(userRole==="admin"){
+        displayName.textContent = "UNDERBOSS";
+        displayRole.textContent = "CAPOREGIME";
+        addBtn.style.display="flex";
       } else {
-        alert("You don't have permission to view this ledger.");
-        window.location.href = 'fixindexlast.html';
+        displayName.textContent = "SOLDIER";
+        displayRole.textContent = "ASSOCIATE";
       }
 
-      const newsContainer = document.getElementById('newsContainer');
-      const newsForm = document.getElementById('newsForm');
-      const newsTitle = document.getElementById('newsTitle');
-      const newsContent = document.getElementById('newsContent');
-      const submitBtn = document.getElementById('submitBtn');
-      const bg = document.getElementById('bg');
+      loadNews();
 
-      // Load saved news from localStorage
-      let news = [];
-  function loadNewsFromFirebase() {
-    db.ref('news').once('value').then(snapshot => {
-      news = snapshot.val() || [];
-      loadNewsFromFirebase();
-    });
-  }
-  function saveNewsToFirebase() {
-    db.ref('news').set(news);
-  }
-      
-      // Add sample news if empty (for testing)
-      if (news.length === 0 && (userRole === 'owner' || userRole === 'admin')) {
-        news = [
-          {
-            id: 1,
-            title: "TERRITORY TAKEOVER - SOUTH SIDE",
-            content: "The Esposito rats dared to cross our borders. Their bodies now fertilize the docks. All captains report for cleanup details at the usual spot. Bring shovels and lye.",
-            date: new Date().toISOString(),
-            author: 'THE_DON',
-            authorRole: 'owner'
-          },
-          {
-            id: 2,
-            content: "New shipment arrives Thursday at midnight. Warehouse 42. Any man who breathes a word of this to outsiders will lose his tongue before sunrise. Payment in unmarked bills only.",
-            date: new Date().toISOString(),
-            author: 'GHOST',
-            authorRole: 'admin'
-          },
-          {
-            id: 3,
-            title: "RAT ALERT",
-            content: "We have a traitor in our ranks. Last seen wearing a red tie. $50,000 for his head delivered to me personally. No questions asked.",
-            date: new Date().toISOString(),
-            author: 'THE_DON',
-            authorRole: 'owner'
-          }
-        ];
-        saveNewsToFirebase();
-      }
-      
-      loadNewsFromFirebase();
-
-      // Toggle news form (only for admin/owner)
-      addBtn.addEventListener('click', function() {
-        if (userRole === 'admin' || userRole === 'owner') {
-          newsForm.style.display = newsForm.style.display === 'block' ? 'none' : 'block';
-          if (newsForm.style.display === 'block') {
+      if(userRole==="owner" || userRole==="admin"){
+        addBtn.addEventListener("click", ()=>{
+          newsForm.style.display = newsForm.style.display === "block" ? "none" : "block";
+          if(newsForm.style.display==="block"){
             newsTitle.focus();
           }
-        }
-      });
-
-      // Submit new news
-      submitBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const title = newsTitle.value.trim();
-        const content = newsContent.value.trim();
-        
-        if (content) { // Content is required, title is optional
-          const newNews = {
-            id: Date.now(),
-            title: title || "NO TITLE", // Fallback if no title
-            content: content,
-            date: new Date().toISOString(),
-            author: currentUserId,
-            authorRole: userRole
-          };
-          news.push(newNews);
-          saveNewsToFirebase();
-          loadNewsFromFirebase();
-          newsTitle.value = '';
-          newsContent.value = '';
-          newsForm.style.display = 'none';
-          
-          // Blood drip animation effect
-          const drip = document.createElement('div');
-          drip.className = 'blood-drip';
-          drip.innerHTML = '💧';
-          drip.style.left = (submitBtn.offsetLeft + submitBtn.offsetWidth/2) + 'px';
-          drip.style.top = (submitBtn.offsetTop + submitBtn.offsetHeight) + 'px';
-          document.body.appendChild(drip);
-          setTimeout(() => {
-            document.body.removeChild(drip);
-          }, 1000);
-        }
-      });
-
-      // Smooth zoom effect on scroll
-      window.addEventListener('scroll', function() {
-        const scrollPosition = window.scrollY;
-        const scale = 1 + (scrollPosition * 0.00015);
-        bg.style.transform = `scale(${Math.min(scale, 1.02)})`;
-      });
-
-      
-function enableAddBtn() {
-  addBtn.addEventListener('click', function () {
-    if (userRole === 'admin' || userRole === 'owner') {
-      newsForm.style.display = newsForm.style.display === 'block' ? 'none' : 'block';
-      if (newsForm.style.display === 'block') {
-        newsTitle.focus();
-      }
-    }
-  });
-}
-
-
-function renderNews() {
-        newsContainer.innerHTML = '';
-        if (news.length === 0) {
-          newsContainer.innerHTML = `
-            <div class="news-item" style="text-align:center;color:#ff6666;">
-              The ledger is empty... for now.
-            </div>`;
-          return;
-        }
-        
-        // Sort by newest first
-        news.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        news.forEach(item => {
-          const newsEl = document.createElement('div');
-          newsEl.className = 'news-item';
-          
-          const newsHeader = document.createElement('div');
-          newsHeader.className = 'news-header';
-          
-          const newsTitleEl = document.createElement('div');
-          newsTitleEl.className = 'news-title';
-          newsTitleEl.textContent = item.title || "DIRECTIVE";
-          
-          const dropdown = document.createElement('div');
-          dropdown.className = 'dropdown';
-          
-          // Only show controls for admin/owner
-          if (userRole === 'admin' || userRole === 'owner') {
-            const dropbtn = document.createElement('button');
-            dropbtn.className = 'dropdown-btn';
-            dropbtn.innerHTML = '⋮';
-            dropbtn.title = 'Actions';
-            
-            const dropdownContent = document.createElement('div');
-            dropdownContent.className = 'dropdown-content';
-            
-            const editBtn = document.createElement('button');
-            editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-            editBtn.onclick = () => editNews(item.id);
-            dropdownContent.appendChild(editBtn);
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Erase';
-            deleteBtn.onclick = () => deleteNews(item.id);
-            dropdownContent.appendChild(deleteBtn);
-            
-            dropdown.appendChild(dropbtn);
-            dropdown.appendChild(dropdownContent);
+        });
+        submitBtn.addEventListener("click", e=>{
+          e.preventDefault();
+          const title = newsTitle.value.trim();
+          const content = newsContent.value.trim();
+          if(content){
+            db.collection("news").add({
+              title: title || "NO TITLE",
+              content,
+              date: new Date(),
+              author: user.email,
+              authorRole: userRole
+            }).then(()=>{
+              newsTitle.value = "";
+              newsContent.value = "";
+              newsForm.style.display = "none";
+            });
           }
-          
-          newsHeader.appendChild(newsTitleEl);
-          if (userRole === 'admin' || userRole === 'owner') {
-            newsHeader.appendChild(dropdown);
-          }
-          
-          const contentEl = document.createElement('div');
-          contentEl.className = 'news-content';
-          contentEl.textContent = item.content;
-          
-          const meta = document.createElement('div');
-          meta.className = 'news-meta';
-          meta.textContent = `${new Date(item.date).toLocaleString()} • Written in blood by: ${item.author} (${item.authorRole.toUpperCase()})`;
-          
-          newsEl.appendChild(newsHeader);
-          newsEl.appendChild(contentEl);
-          newsEl.appendChild(meta);
-          
-          newsContainer.appendChild(newsEl);
         });
       }
 
-      function editNews(id) {
-        const newsItem = news.find(item => item.id === id);
-        if (newsItem) {
-          newsTitle.value = newsItem.title || "";
-          newsContent.value = newsItem.content;
-          newsForm.style.display = 'block';
-          window.scrollTo(0, 0);
-          
-          // Remove the old news
-          news = news.filter(item => item.id !== id);
-          saveNewsToFirebase();
-        }
-      }
-
-      function deleteNews(id) {
-        if (confirm('This cannot be undone. Erase this entry?')) {
-          // Blood splatter effect
-          for (let i = 0; i < 5; i++) {
-            setTimeout(() => {
-              const drip = document.createElement('div');
-              drip.className = 'blood-drip';
-              drip.innerHTML = '💧';
-              drip.style.left = Math.random() * window.innerWidth + 'px';
-              drip.style.top = '50px';
-              document.body.appendChild(drip);
-              setTimeout(() => {
-                document.body.removeChild(drip);
-              }, 1000);
-            }, i * 200);
-          }
-          
-          setTimeout(() => {
-            news = news.filter(item => item.id !== id);
-            saveNewsToFirebase();
-            loadNewsFromFirebase();
-          }, 1000);
-        }
-      }
-
-      // Removed localStorage save function (replaced with Firebase)
     });
-  </script>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAJy3orl6XALyRP0i2XCIZLM5bGe5Qgu6Y",
-    authDomain: "mafia-all.firebaseapp.com",
-    databaseURL: "https://mafia-all-default-rtdb.firebaseio.com",
-    projectId: "mafia-all",
-    storageBucket: "mafia-all.firebasestorage.app",
-    messagingSenderId: "549952351412",
-    appId: "1:549952351412:web:fb051fe2665e6dc187bbe1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-</script>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById("debugRole").textContent = localStorage.getItem('userRole') || 'none';
-  });
-
-  function switchRole(role) {
-    localStorage.setItem('userRole', role);
-    localStorage.setItem('loggedIn', 'true');
-    location.reload();
+  } else {
+    alert("You don't have permission to view this ledger.");
+    window.location.href = "index.html";
   }
-</script>
+});
 
+function loadNews(){
+  db.collection("news").orderBy("date","desc").onSnapshot(snapshot=>{
+    const newsContainer = document.getElementById("newsContainer");
+    newsContainer.innerHTML = "";
+    if(snapshot.empty){
+      newsContainer.innerHTML = `
+        <div class="news-item" style="text-align:center;color:#ff6666;">
+          The ledger is empty... for now.
+        </div>`;
+      return;
+    }
+    snapshot.forEach(doc=>{
+      const data = doc.data();
+      const newsEl = document.createElement("div");
+      newsEl.className = "news-item";
+
+      const newsHeader = document.createElement("div");
+      newsHeader.className = "news-header";
+
+      const newsTitleEl = document.createElement("div");
+      newsTitleEl.className = "news-title";
+      newsTitleEl.textContent = data.title || "DIRECTIVE";
+
+      if(data.authorRole==="owner" || data.authorRole==="admin"){
+        const dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
+
+        const dropbtn = document.createElement("button");
+        dropbtn.className = "dropdown-btn";
+        dropbtn.innerHTML = "⋮";
+
+        const dropdownContent = document.createElement("div");
+        dropdownContent.className = "dropdown-content";
+
+        const editBtn = document.createElement("button");
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        editBtn.onclick = ()=>editNews(doc.id);
+        dropdownContent.appendChild(editBtn);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Erase';
+        deleteBtn.onclick = ()=>deleteNews(doc.id);
+        dropdownContent.appendChild(deleteBtn);
+
+        dropdown.appendChild(dropbtn);
+        dropdown.appendChild(dropdownContent);
+        newsHeader.appendChild(dropdown);
+      }
+
+      newsHeader.appendChild(newsTitleEl);
+      newsEl.appendChild(newsHeader);
+
+      const contentEl = document.createElement("div");
+      contentEl.className = "news-content";
+      contentEl.textContent = data.content;
+
+      const meta = document.createElement("div");
+      meta.className = "news-meta";
+      meta.textContent = `${new Date(data.date.seconds*1000).toLocaleString()} • Written by: ${data.author} (${data.authorRole.toUpperCase()})`;
+
+      newsEl.appendChild(contentEl);
+      newsEl.appendChild(meta);
+
+      newsContainer.appendChild(newsEl);
+    });
+  });
+}
+
+function deleteNews(id){
+  if(confirm("This cannot be undone. Erase this entry?")){
+    db.collection("news").doc(id).delete();
+  }
+}
+
+function editNews(id){
+  db.collection("news").doc(id).get().then(doc=>{
+    const data = doc.data();
+    document.getElementById("newsTitle").value = data.title;
+    document.getElementById("newsContent").value = data.content;
+    document.getElementById("newsForm").style.display = "block";
+    deleteNews(id);
+    window.scrollTo(0,0);
+  });
+}
+
+<script>
+auth.onAuthStateChanged(user => {
+  if(user){
+    db.collection("users").doc(user.uid).get().then(doc=>{
+      if(doc.exists){
+        const data = doc.data();
+        const userRole = data.role;
+
+        const displayName = document.getElementById("displayName");
+        const displayRole = document.getElementById("displayRole");
+        const userInfo = document.getElementById("userInfo");
+        const addBtn = document.getElementById("addBtn");
+        const newsContainer = document.getElementById("newsContainer");
+        const newsForm = document.getElementById("newsForm");
+        const newsTitle = document.getElementById("newsTitle");
+        const newsContent = document.getElementById("newsContent");
+        const submitBtn = document.getElementById("submitBtn");
+
+        userInfo.style.display = "block";
+        displayName.textContent = user.email;
+        displayRole.textContent = userRole.toUpperCase();
+
+        if(userRole==="owner"){
+          displayName.textContent = "THE DON";
+          displayRole.textContent = "IL CAPO DI TUTTI CAPI";
+          addBtn.style.display="flex";
+        } else if(userRole==="admin"){
+          displayName.textContent = "UNDERBOSS";
+          displayRole.textContent = "CAPOREGIME";
+          addBtn.style.display="flex";
+        } else {
+          displayName.textContent = "SOLDIER";
+          displayRole.textContent = "ASSOCIATE";
+        }
+
+        loadNews();
+
+        if(userRole==="owner" || userRole==="admin"){
+          addBtn.addEventListener("click", ()=>{
+            newsForm.style.display = newsForm.style.display === "block" ? "none" : "block";
+            if(newsForm.style.display==="block"){
+              newsTitle.focus();
+            }
+          });
+          submitBtn.addEventListener("click", e=>{
+            e.preventDefault();
+            const title = newsTitle.value.trim();
+            const content = newsContent.value.trim();
+            if(content){
+              db.collection("news").add({
+                title: title || "NO TITLE",
+                content,
+                date: new Date(),
+                author: user.email,
+                authorRole: userRole
+              }).then(()=>{
+                newsTitle.value = "";
+                newsContent.value = "";
+                newsForm.style.display = "none";
+              });
+            }
+          });
+        }
+
+      } else {
+        alert("⚠️ User document tidak ditemukan di Firestore!");
+        auth.signOut();
+      }
+    });
+  } else {
+    alert("You don't have permission to view this ledger.");
+    window.location.href = "index.html";
+  }
+});
+
+function loadNews(){
+  db.collection("news").orderBy("date","desc").onSnapshot(snapshot=>{
+    const newsContainer = document.getElementById("newsContainer");
+    newsContainer.innerHTML = "";
+    if(snapshot.empty){
+      newsContainer.innerHTML = `
+        <div class="news-item" style="text-align:center;color:#ff6666;">
+          The ledger is empty... for now.
+        </div>`;
+      return;
+    }
+    snapshot.forEach(doc=>{
+      const data = doc.data();
+      const newsEl = document.createElement("div");
+      newsEl.className = "news-item";
+
+      const newsHeader = document.createElement("div");
+      newsHeader.className = "news-header";
+
+      const newsTitleEl = document.createElement("div");
+      newsTitleEl.className = "news-title";
+      newsTitleEl.textContent = data.title || "DIRECTIVE";
+
+      if(data.authorRole==="owner" || data.authorRole==="admin"){
+        const dropdown = document.createElement("div");
+        dropdown.className = "dropdown";
+
+        const dropbtn = document.createElement("button");
+        dropbtn.className = "dropdown-btn";
+        dropbtn.innerHTML = "⋮";
+
+        const dropdownContent = document.createElement("div");
+        dropdownContent.className = "dropdown-content";
+
+        const editBtn = document.createElement("button");
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        editBtn.onclick = ()=>editNews(doc.id);
+        dropdownContent.appendChild(editBtn);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Erase';
+        deleteBtn.onclick = ()=>deleteNews(doc.id);
+        dropdownContent.appendChild(deleteBtn);
+
+        dropdown.appendChild(dropbtn);
+        dropdown.appendChild(dropdownContent);
+        newsHeader.appendChild(dropdown);
+      }
+
+      newsHeader.appendChild(newsTitleEl);
+      newsEl.appendChild(newsHeader);
+
+      const contentEl = document.createElement("div");
+      contentEl.className = "news-content";
+      contentEl.textContent = data.content;
+
+      const meta = document.createElement("div");
+      meta.className = "news-meta";
+      meta.textContent = `${new Date(data.date.seconds*1000).toLocaleString()} • Written by: ${data.author} (${data.authorRole.toUpperCase()})`;
+
+      newsEl.appendChild(contentEl);
+      newsEl.appendChild(meta);
+
+      newsContainer.appendChild(newsEl);
+    });
+  });
+}
+
+function deleteNews(id){
+  if(confirm("This cannot be undone. Erase this entry?")){
+    db.collection("news").doc(id).delete();
+  }
+}
+
+function editNews(id){
+  db.collection("news").doc(id).get().then(doc=>{
+    const data = doc.data();
+    document.getElementById("newsTitle").value = data.title;
+    document.getElementById("newsContent").value = data.content;
+    document.getElementById("newsForm").style.display = "block";
+    deleteNews(id);
+    window.scrollTo(0,0);
+  });
+}
+
+</script>
+  </script>
 </body>
 </html>
