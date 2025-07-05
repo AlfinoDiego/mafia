@@ -517,7 +517,16 @@
       const bg = document.getElementById('bg');
 
       // Load saved news from localStorage
-      let news = JSON.parse(localStorage.getItem('syndicate_news')) || [];
+      let news = [];
+  function loadNewsFromFirebase() {
+    db.ref('news').once('value').then(snapshot => {
+      news = snapshot.val() || [];
+      loadNewsFromFirebase();
+    });
+  }
+  function saveNewsToFirebase() {
+    db.ref('news').set(news);
+  }
       
       // Add sample news if empty (for testing)
       if (news.length === 0 && (userRole === 'owner' || userRole === 'admin')) {
@@ -546,10 +555,10 @@
             authorRole: 'owner'
           }
         ];
-        saveNews();
+        saveNewsToFirebase();
       }
       
-      renderNews();
+      loadNewsFromFirebase();
 
       // Toggle news form (only for admin/owner)
       addBtn.addEventListener('click', function() {
@@ -577,8 +586,8 @@
             authorRole: userRole
           };
           news.push(newNews);
-          saveNews();
-          renderNews();
+          saveNewsToFirebase();
+          loadNewsFromFirebase();
           newsTitle.value = '';
           newsContent.value = '';
           newsForm.style.display = 'none';
@@ -685,7 +694,7 @@
           
           // Remove the old news
           news = news.filter(item => item.id !== id);
-          saveNews();
+          saveNewsToFirebase();
         }
       }
 
@@ -708,16 +717,32 @@
           
           setTimeout(() => {
             news = news.filter(item => item.id !== id);
-            saveNews();
-            renderNews();
+            saveNewsToFirebase();
+            loadNewsFromFirebase();
           }, 1000);
         }
       }
 
-      function saveNews() {
-        localStorage.setItem('syndicate_news', JSON.stringify(news));
-      }
+      // Removed localStorage save function (replaced with Firebase)
     });
   </script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAJy3orl6XALyRP0i2XCIZLM5bGe5Qgu6Y",
+    authDomain: "mafia-all.firebaseapp.com",
+    databaseURL: "https://mafia-all-default-rtdb.firebaseio.com",
+    projectId: "mafia-all",
+    storageBucket: "mafia-all.firebasestorage.app",
+    messagingSenderId: "549952351412",
+    appId: "1:549952351412:web:fb051fe2665e6dc187bbe1"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
 </body>
 </html>
