@@ -517,22 +517,30 @@ auth.onAuthStateChanged(user => {
         displayName.textContent = user.email;
         displayRole.textContent = userRole.toUpperCase();
 
-        if(userRole==="owner"){
-          displayName.textContent = "THE DON";
-          displayRole.textContent = "IL CAPO DI TUTTI CAPI";
-          addBtn.style.display="flex";
-        } else if(userRole==="admin"){
-          displayName.textContent = "UNDERBOSS";
-          displayRole.textContent = "CAPOREGIME";
-          addBtn.style.display="flex";
-        } else {
-          displayName.textContent = "SOLDIER";
-          displayRole.textContent = "ASSOCIATE";
-        }
+        if(userRole === "owner") {
+  displayName.textContent = "THE DON";
+  displayRole.textContent = "IL CAPO DI TUTTI CAPI";
+  addBtn.style.display = "flex";
+} else if(userRole === "ratu") {
+  displayName.textContent = "THE QUEEN";
+  displayRole.textContent = "DONNA SUPREMA";
+  addBtn.style.display = "flex";
+} else if(userRole === "princess") {
+  displayName.textContent = "THE PRINCESS";
+  displayRole.textContent = "LA PRINCIPESSA";
+  addBtn.style.display = "flex";
+} else if(userRole === "capo") {
+  displayName.textContent = "CAPO";
+  displayRole.textContent = "SOLDIER LIEUTENANT";
+  addBtn.style.display = "flex";
+} else {
+  displayName.textContent = "ASSOCIATE";
+  displayRole.textContent = "FAMILY ASSOCIATE";
+}
 
         loadNews();
 
-        if(userRole==="owner" || userRole==="admin"){
+        if(userRole==="owner" || userRole==="ratu" || userRole==="princess" || userRole==="capo"){
           addBtn.addEventListener("click", ()=>{
             newsForm.style.display = newsForm.style.display === "block" ? "none" : "block";
             if(newsForm.style.display==="block"){
@@ -593,7 +601,7 @@ function loadNews(){
       newsTitleEl.className = "news-title";
       newsTitleEl.textContent = data.title || "DIRECTIVE";
 
-      if(data.authorRole==="owner" || data.authorRole==="admin"){
+      if(data.authorRole==="owner" || data.authorRole==="ratu" || data.authorRole==="princess" || data.authorRole==="capo"){
         const dropdown = document.createElement("div");
         dropdown.className = "dropdown";
 

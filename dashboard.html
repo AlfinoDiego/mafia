@@ -759,11 +759,25 @@
     const doc = await db.collection("users").doc(user.uid).get();
     if(doc.exists){
       const data = doc.data();
-      document.getElementById("displayName").textContent = data.email;
-      document.getElementById("displayRole").textContent = data.role;
+      if(data.role === "owner"){
+  displayName.textContent = "THE DON";
+  displayRole.textContent = "IL CAPO DI TUTTI CAPI";
+} else if(data.role === "ratu"){
+  displayName.textContent = "THE QUEEN";
+  displayRole.textContent = "DONNA SUPREMA";
+} else if(data.role === "princess"){
+  displayName.textContent = "THE PRINCESS";
+  displayRole.textContent = "LA PRINCIPESSA";
+} else if(data.role === "capo"){
+  displayName.textContent = "CAPO";
+  displayRole.textContent = "SOLDIER LIEUTENANT";
+} else {
+  displayName.textContent = data.email.toUpperCase();
+  displayRole.textContent = "ASSOCIATE";
+}
       document.getElementById("userInfo").style.display = 'block';
       document.getElementById("logoutMenu").style.display = 'block';
-      if(data.role === "owner" || data.role === "admin"){
+      if(data.role === "owner" || data.role === "ratu" || data.role === "princess" || data.role === "capo"){
         document.getElementById("editControls").style.display = 'block';
       }
     }
@@ -784,7 +798,7 @@
       const optionsList = document.getElementById('editOptionsList');
       optionsList.innerHTML = '';
 
-      if (role === 'admin') {
+      if (role === 'capo') {
         optionsList.innerHTML = `
           <button class="edit-btn" onclick="location.href='testimoni.html'"><i class="fas fa-scroll"></i> Edit Testimonials</button>
           <button class="edit-btn" onclick="location.href='requests.html'"><i class="fas fa-question"></i> Manage Q&A</button>
