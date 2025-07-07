@@ -756,42 +756,56 @@
     // AUTH FUNCTIONS
     auth.onAuthStateChanged(async(user)=>{
   if(user){
-    const doc = await db.collection("users").doc(user.uid).get();
-    if(doc.exists){
-      const data = doc.data();
-      if(data.role === "owner"){
-  displayName.textContent = "THE DON";
-  displayRole.textContent = "IL CAPO DI TUTTI CAPI";
-} else if(data.role === "ratu"){
-  displayName.textContent = "THE QUEEN";
-  displayRole.textContent = "DONNA SUPREMA";
-} else if(data.role === "princess"){
-  displayName.textContent = "THE PRINCESS";
-  displayRole.textContent = "LA PRINCIPESSA";
-} else if(data.role === "capo"){
-  displayName.textContent = "CAPO";
-  displayRole.textContent = "SOLDIER LIEUTENANT";
-} else {
-  displayName.textContent = data.email.toUpperCase();
-  displayRole.textContent = "ASSOCIATE";
-}
-      document.getElementById("userInfo").style.display = 'block';
-      document.getElementById("logoutMenu").style.display = 'block';
-      if(data.role === "owner" || data.role === "ratu" || data.role === "princess" || data.role === "capo"){
-        document.getElementById("editControls").style.display = 'block';
-      }
+    const userRef = db.collection("users").doc(user.uid);  // Referensi dokumen pengguna berdasarkan UID
+    const doc = await userRef.get();
+    
+    if (!doc.exists) {
+      // Jika pengguna belum ada di Firestore, tambahkan data pengguna baru
+      userRef.set({
+        email: user.email,
+        role: 'associate', // Role default atau sesuai inputan
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() // Timestamp
+      })
+      .then(() => {
+        console.log('Pengguna baru berhasil ditambahkan ke Firestore');
+      })
+      .catch((error) => {
+        console.error('Terjadi kesalahan saat menambahkan pengguna ke Firestore: ', error);
+      });
     }
-  }else{
-    window.location.href = "index.html"; // arahkan ke login kalau belum login
+
+    // Jika pengguna sudah ada, lanjutkan untuk menampilkan informasi pengguna
+    const data = doc.data();
+    if(data.role === "owner"){
+      displayName.textContent = "THE DON";
+      displayRole.textContent = "IL CAPO DI TUTTI CAPI";
+    } else if(data.role === "ratu"){
+      displayName.textContent = "THE QUEEN";
+      displayRole.textContent = "DONNA SUPREMA";
+    } else if(data.role === "princess"){
+      displayName.textContent = "THE PRINCESS";
+      displayRole.textContent = "LA PRINCIPESSA";
+    } else if(data.role === "capo"){
+      displayName.textContent = "CAPO";
+      displayRole.textContent = "SOLDIER LIEUTENANT";
+    } else {
+      displayName.textContent = data.email.toUpperCase();
+      displayRole.textContent = "ASSOCIATE";
+    }
+    
+    // Menampilkan info pengguna
+    document.getElementById("userInfo").style.display = 'block';
+    document.getElementById("logoutMenu").style.display = 'block';
+    if(data.role === "owner" || data.role === "ratu" || data.role === "princess" || data.role === "capo"){
+      document.getElementById("editControls").style.display = 'block';
+    }
+
+  } else {
+    // Jika pengguna belum login, arahkan ke halaman login
+    window.location.href = "index.html"; 
   }
 });
-    function vanish() {
-  if (confirm("Are you sure you want to vanish? The Syndicate will remember...")) {
-    auth.signOut().then(()=>{
-      window.location.href = "index.html";
-    });
-  }
-}
+
     // EDIT FUNCTIONS
     function showEditOptions() {
       const role = document.getElementById('displayRole').textContent.toLowerCase();
